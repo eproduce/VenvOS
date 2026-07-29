@@ -11,6 +11,7 @@
     </div>
     <Taskbar />
     <StartMenu v-if="store.startMenuOpen" />
+    <Calendar v-if="store.showCalendar" />
   </div>
 </template>
 
@@ -21,6 +22,7 @@ import Desktop from "./components/Desktop.vue";
 import Window from "./components/Window.vue";
 import Taskbar from "./components/Taskbar.vue";
 import StartMenu from "./components/StartMenu.vue";
+import Calendar from "./components/Calendar.vue";
 
 const store = useOSStore();
 

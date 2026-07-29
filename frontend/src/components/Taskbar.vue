@@ -20,7 +20,7 @@
       </div>
     </div>
     <div class="taskbar-right">
-      <div class="system-tray">
+      <div class="system-tray" @click.stop="store.toggleCalendar()">
         <span class="tray-time">{{ store.currentTime }}</span>
         <span class="tray-date">{{ store.currentDate }}</span>
       </div>
@@ -141,6 +141,11 @@ function onTaskbarAppClick(win) {
   align-items: flex-end;
   padding: 4px 10px;
   border-radius: 8px;
+  cursor: pointer;
+  transition: background var(--transition);
+}
+.system-tray:hover {
+  background: rgba(255, 255, 255, 0.04);
 }
 .tray-time {
   font-size: 12.5px;
