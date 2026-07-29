@@ -2,7 +2,7 @@
   <div class="taskbar">
     <div class="taskbar-left">
       <button class="start-btn" :class="{ active: store.startMenuOpen }" @click.stop="store.toggleStartMenu()">
-        <AppIcon name="logo" :size="20" />
+        <AppIcon name="logo" :size="24" />
       </button>
     </div>
     <div class="taskbar-center">
@@ -77,9 +77,9 @@ function onUserClick() {
 }
 
 .start-btn {
-  width: 36px;
-  height: 36px;
-  border-radius: var(--radius-sm);
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius);
   background: transparent;
   color: var(--accent);
   display: flex;
