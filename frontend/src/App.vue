@@ -24,12 +24,18 @@ import StartMenu from "./components/StartMenu.vue";
 
 const store = useOSStore();
 
-let timer;
+let timer, wallpaperTimer;
 onMounted(() => {
+  store.loadWallpaper();
   store.updateTime();
+  store.updateDynamicWallpaper();
   timer = setInterval(store.updateTime, 1000);
+  wallpaperTimer = setInterval(store.updateDynamicWallpaper, 60000);
 });
-onUnmounted(() => clearInterval(timer));
+onUnmounted(() => {
+  clearInterval(timer);
+  clearInterval(wallpaperTimer);
+});
 </script>
 
 <style scoped>

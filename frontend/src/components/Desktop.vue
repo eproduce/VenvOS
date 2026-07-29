@@ -5,11 +5,22 @@
     @contextmenu.prevent="onContextMenu"
     @dblclick.self="openApp('FileManager')"
   >
-    <!-- 桌面背景层 -->
+    <!-- 壁纸层 -->
     <div class="desktop-bg">
-      <div class="bg-gradient-1"></div>
-      <div class="bg-gradient-2"></div>
-      <div class="bg-gradient-3"></div>
+      <!-- 静态壁纸 -->
+      <div
+        v-if="store.currentWallpaper?.type === 'static'"
+        class="bg-wallpaper"
+        :style="{ background: store.currentWallpaper.background }"
+      ></div>
+      <!-- 动态壁纸 -->
+      <div
+        v-else
+        class="bg-wallpaper"
+        :style="{ background: store.dynamicBackground || getDefaultDynamic() }"
+      ></div>
+      <!-- 柔光叠加层 -->
+      <div class="bg-soft-light"></div>
     </div>
 
     <!-- 桌面图标 -->
@@ -34,6 +45,9 @@
       <div class="context-menu-item" @click="openApp('DiskManager')">
         <AppIcon name="disk" :size="14" /> 磁盘管理
       </div>
+      <div class="context-menu-item" @click="openApp('WallpaperSettings')">
+        <AppIcon name="settings" :size="14" /> 更换壁纸...
+      </div>
       <div class="context-menu-separator"></div>
       <div class="context-menu-item" @click="openApp('Notepad')">
         <AppIcon name="file" :size="14" /> 新建文本文档
@@ -48,12 +62,17 @@
 
 <script setup>
 import { reactive } from "vue";
-import { useOSStore } from "../store/index.js";
+import { useOSStore, getDynamicWallpaper } from "../store/index.js";
 import DesktopIcon from "./DesktopIcon.vue";
 import AppIcon from "./AppIcon.vue";
 
 const store = useOSStore();
 const contextMenu = reactive({ show: false, x: 0, y: 0 });
+
+function getDefaultDynamic() {
+  const hour = new Date().getHours() + new Date().getMinutes() / 60;
+  return getDynamicWallpaper(hour);
+}
 
 function onContextMenu(e) {
   contextMenu.show = true;
@@ -75,42 +94,25 @@ function openApp(appName) {
   overflow: hidden;
 }
 
-/* 现代化背景 */
+/* 壁纸背景 */
 .desktop-bg {
   position: absolute;
   inset: 0;
   z-index: 0;
 }
-.bg-gradient-1 {
+.bg-wallpaper {
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, #0d1117 0%, #161b22 30%, #0f111a 60%, #0d1117 100%);
+  transition: background 1.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.bg-gradient-2 {
+/* 柔光玻璃层：macOS Tahoe 风格的柔光效果 */
+.bg-soft-light {
   position: absolute;
-  top: -40%;
-  left: -20%;
-  width: 70%;
-  height: 100%;
-  background: radial-gradient(ellipse at center, rgba(108, 140, 255, 0.06) 0%, transparent 70%);
-  animation: bgFloat1 20s ease-in-out infinite;
-}
-.bg-gradient-3 {
-  position: absolute;
-  bottom: -30%;
-  right: -10%;
-  width: 60%;
-  height: 80%;
-  background: radial-gradient(ellipse at center, rgba(62, 207, 142, 0.04) 0%, transparent 70%);
-  animation: bgFloat2 25s ease-in-out infinite;
-}
-@keyframes bgFloat1 {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  50% { transform: translate(30px, -20px) scale(1.05); }
-}
-@keyframes bgFloat2 {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  50% { transform: translate(-20px, 30px) scale(1.08); }
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.04) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 100%, rgba(255,255,255,0.03) 0%, transparent 50%);
+  pointer-events: none;
 }
 
 .desktop-icons {

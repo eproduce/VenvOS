@@ -45,6 +45,10 @@
         :window-id="window.id"
         :params="window.params"
       />
+      <WallpaperSettings
+        v-else-if="window.app === 'WallpaperSettings'"
+        :window-id="window.id"
+      />
       <div v-else class="app-placeholder">
         <AppIcon :name="window.icon" :size="48" />
         <h3>{{ window.title }}</h3>
@@ -72,6 +76,7 @@ import FileManager from "./apps/FileManager.vue";
 import DiskManager from "./apps/DiskManager.vue";
 import SystemInfo from "./apps/SystemInfo.vue";
 import Notepad from "./apps/Notepad.vue";
+import WallpaperSettings from "./apps/WallpaperSettings.vue";
 import AppIcon from "./AppIcon.vue";
 
 const props = defineProps({
@@ -193,35 +198,43 @@ onUnmounted(() => {
 <style scoped>
 .window {
   position: absolute;
-  background: rgba(18, 18, 34, 0.88);
-  backdrop-filter: blur(20px) saturate(1.6);
-  -webkit-backdrop-filter: blur(20px) saturate(1.6);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: var(--radius-lg);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 0 0.5px rgba(255, 255, 255, 0.04);
+  background: rgba(22, 22, 42, 0.75);
+  backdrop-filter: blur(28px) saturate(1.8);
+  -webkit-backdrop-filter: blur(28px) saturate(1.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-xl);
+  box-shadow:
+    0 1px 2px rgba(0,0,0,0.25),
+    0 8px 24px rgba(0,0,0,0.35),
+    0 0 0 0.5px rgba(255,255,255,0.06),
+    inset 0 0.5px 0 rgba(255,255,255,0.08);
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  transition: box-shadow var(--transition), border-color var(--transition);
+  transition: box-shadow var(--transition-slow), border-color var(--transition-slow);
 }
 .window.is-active {
-  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(108, 140, 255, 0.3);
-  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow:
+    0 1px 3px rgba(0,0,0,0.3),
+    0 16px 48px rgba(0,0,0,0.5),
+    0 0 0 1px rgba(108,140,255,0.25),
+    inset 0 0.5px 0 rgba(255,255,255,0.1);
+  border-color: rgba(255, 255, 255, 0.14);
 }
 .window.maximized {
   border-radius: 0 !important;
   border: none;
 }
 
-/* 标题栏 */
+/* 标题栏 — macOS Tahoe 风格 */
 .window-titlebar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 40px;
-  background: rgba(14, 14, 28, 0.8);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  padding: 0 8px;
+  height: 42px;
+  background: rgba(16, 16, 32, 0.7);
+  border-bottom: 0.5px solid rgba(255, 255, 255, 0.06);
+  padding: 0 14px;
   cursor: grab;
   flex-shrink: 0;
 }
@@ -231,51 +244,49 @@ onUnmounted(() => {
 .titlebar-left {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   min-width: 0;
 }
 .title-icon {
   color: var(--accent);
-  opacity: 0.8;
+  opacity: 0.85;
   flex-shrink: 0;
 }
 .title-text {
-  font-size: 12px;
+  font-size: 12.5px;
   font-weight: 600;
   color: var(--text-secondary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
 }
 .titlebar-actions {
   display: flex;
-  gap: 4px;
+  gap: 6px;
 }
 .title-btn {
-  width: 12px;
-  height: 12px;
+  width: 13px;
+  height: 13px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.2);
-  color: transparent;
-  font-size: 0;
+  background: rgba(255,255,255,0.18);
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all var(--transition);
   padding: 0;
+  transition: all var(--transition);
 }
 .title-btn svg { opacity: 0; }
-.title-btn:hover { background: rgba(255, 255, 255, 0.35); }
-.title-btn.close-btn { background: rgba(255, 95, 107, 0.5); }
+.title-btn:hover { background: rgba(255,255,255,0.32); }
+.title-btn.close-btn { background: rgba(255,90,100,0.55); }
 .title-btn.close-btn:hover { background: var(--danger); }
 
-/* 内容区 */
+/* 内容区 — 微弱的内部玻璃感 */
 .window-body {
   flex: 1;
   overflow: hidden;
   display: flex;
-  background: rgba(14, 14, 26, 0.5);
+  background: rgba(12, 12, 24, 0.4);
 }
 
 /* 调整大小手柄 */
@@ -289,7 +300,7 @@ onUnmounted(() => {
 .resize-e, .resize-w { top: 8px; bottom: 8px; width: 6px; cursor: ew-resize; }
 .resize-e { right: 0; }
 .resize-w { left: 0; }
-.resize-ne, .resize-nw, .resize-se, .resize-sw { width: 12px; height: 12px; }
+.resize-ne, .resize-nw, .resize-se, .resize-sw { width: 14px; height: 14px; }
 .resize-ne { top: 0; right: 0; cursor: nesw-resize; }
 .resize-nw { top: 0; left: 0; cursor: nwse-resize; }
 .resize-se { bottom: 0; right: 0; cursor: nwse-resize; }
@@ -301,7 +312,7 @@ onUnmounted(() => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 14px;
   color: var(--text-muted);
 }
 .app-placeholder h3 { font-weight: 600; font-size: 15px; }
