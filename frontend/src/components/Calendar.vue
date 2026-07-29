@@ -26,14 +26,17 @@
           :class="{
             other: !cell.current,
             today: cell.isToday,
-            weekend: cell.weekend,
-            holiday: cell.holiday?.type === 'solar' || cell.holiday?.type === 'lunar',
+            weekend: cell.weekend && !cell.holiday,
+            holiday: cell.holiday?.type === 'holiday',
+            workday: cell.holiday?.type === 'workday',
+            festival: cell.holiday?.type === 'solar' || cell.holiday?.type === 'lunar',
             term: cell.holiday?.type === 'term',
           }"
         >
           <div class="cal-solar">{{ cell.day }}</div>
           <div class="cal-lunar">{{ cell.lunarText }}</div>
-          <div v-if="cell.holiday && cell.holiday.type !== 'term'" class="cal-holiday-dot"></div>
+          <div v-if="cell.holiday?.type === 'holiday'" class="cal-badge cal-badge-holiday">休</div>
+          <div v-else-if="cell.holiday?.type === 'workday'" class="cal-badge cal-badge-workday">班</div>
         </div>
       </div>
 
@@ -94,16 +97,28 @@ const calendarCells = computed(() => {
   for (let i = 1; i <= lastDay.getDate(); i++) {
     const d = new Date(year, month, i);
     const lunar = solarToLunar(d);
-    const holidays = getHoliday(d, lunar);
-    const primaryHoliday = holidays.find(h => h.type === "lunar" || h.type === "solar") || holidays[0];
+    const holiday = getHoliday(d, lunar);
+
+    // 决定农历文本显示
+    let lunarText;
+    if (holiday?.type === "holiday") {
+      lunarText = holiday.name; // 放假直接显示节日名
+    } else if (holiday?.type === "workday") {
+      lunarText = "补班"; // 补班日
+    } else if (lunar.dayName === "初一") {
+      lunarText = lunar.monthName;
+    } else {
+      lunarText = lunar.dayName;
+    }
+
     cells.push({
       day: i,
       date: d,
       current: true,
       isToday: isToday(d, today),
       weekend: isWeekend(d),
-      lunarText: primaryHoliday && primaryHoliday.type !== "term" ? primaryHoliday.name : lunar.dayName === "初一" ? lunar.monthName : lunar.dayName,
-      holiday: primaryHoliday || null,
+      lunarText,
+      holiday: holiday || null,
     });
   }
 
@@ -224,14 +239,57 @@ function nextMonth() {
 .cal-cell.other { opacity: 0.3; }
 .cal-cell.today {
   background: var(--accent-soft);
-  color: var(--accent-hover);
 }
 .cal-cell.today .cal-solar {
   font-weight: 700;
+  color: var(--accent-hover);
 }
 .cal-cell.weekend .cal-solar { color: var(--warning); }
-.cal-cell.holiday .cal-lunar { color: var(--danger); font-weight: 600; }
+
+/* 法定放假 */
+.cal-cell.holiday {
+  background: rgba(255, 80, 80, 0.1);
+}
+.cal-cell.holiday .cal-solar { color: var(--danger); font-weight: 600; }
+.cal-cell.holiday .cal-lunar {
+  color: var(--danger);
+  font-weight: 600;
+  font-size: 9px;
+}
+
+/* 调休补班 */
+.cal-cell.workday {
+  background: rgba(255, 180, 60, 0.08);
+}
+.cal-cell.workday .cal-solar { color: var(--warning); }
+.cal-cell.workday .cal-lunar {
+  color: var(--warning);
+  font-weight: 600;
+  font-size: 9.5px;
+}
+
+/* 普通节日 */
+.cal-cell.festival .cal-lunar { color: var(--danger); }
 .cal-cell.term .cal-lunar { color: var(--success); }
+
+.cal-badge {
+  position: absolute;
+  top: 1px;
+  right: 1px;
+  font-size: 9px;
+  padding: 0 3px;
+  border-radius: 3px;
+  line-height: 14px;
+  font-weight: 700;
+}
+.cal-badge-holiday {
+  background: var(--danger);
+  color: #fff;
+}
+.cal-badge-workday {
+  background: var(--warning);
+  color: #000;
+}
 
 .cal-solar {
   font-size: 13px;
@@ -248,14 +306,6 @@ function nextMonth() {
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 36px;
-}
-.cal-holiday-dot {
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: var(--danger);
-  position: absolute;
-  bottom: 3px;
 }
 
 .cal-footer {

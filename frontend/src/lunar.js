@@ -39,7 +39,7 @@ const SOLAR_HOLIDAYS = {
   "0308": { name: "妇女节", days: 0 },
   "0312": { name: "植树节", days: 0 },
   "0401": { name: "愚人节", days: 0 },
-  "0501": { name: "劳动节", days: 3 },
+  "0501": { name: "劳动节", days: 5 },
   "0504": { name: "青年节", days: 0 },
   "0601": { name: "儿童节", days: 0 },
   "0701": { name: "建党节", days: 0 },
@@ -48,6 +48,189 @@ const SOLAR_HOLIDAYS = {
   "1001": { name: "国庆节", days: 7 },
   "1031": { name: "万圣节", days: 0 },
   "1225": { name: "圣诞节", days: 0 },
+};
+
+// ==================== 中国放假 & 补班安排 ====================
+// 数据来源：国务院办公厅放假通知
+// type: "holiday" = 放假, "workday" = 调休补班
+const HOLIDAY_SCHEDULE = {
+  // ===== 2024 =====
+  // 元旦: 2023-12-30 ~ 2024-01-01
+  "2024-01-01": { name: "元旦", type: "holiday" },
+
+  // 春节: 02-10 ~ 02-17 放假, 02-04(周日) 02-18(周日) 补班
+  "2024-02-04": { name: "春节补班", type: "workday" },
+  "2024-02-10": { name: "春节", type: "holiday" },
+  "2024-02-11": { name: "春节", type: "holiday" },
+  "2024-02-12": { name: "春节", type: "holiday" },
+  "2024-02-13": { name: "春节", type: "holiday" },
+  "2024-02-14": { name: "春节", type: "holiday" },
+  "2024-02-15": { name: "春节", type: "holiday" },
+  "2024-02-16": { name: "春节", type: "holiday" },
+  "2024-02-17": { name: "春节", type: "holiday" },
+  "2024-02-18": { name: "春节补班", type: "workday" },
+
+  // 清明: 04-04 ~ 04-06, 04-07(周日) 补班
+  "2024-04-04": { name: "清明节", type: "holiday" },
+  "2024-04-05": { name: "清明节", type: "holiday" },
+  "2024-04-06": { name: "清明节", type: "holiday" },
+  "2024-04-07": { name: "清明补班", type: "workday" },
+
+  // 劳动节: 05-01 ~ 05-05, 04-28(周日) 05-11(周六) 补班
+  "2024-04-28": { name: "劳动节补班", type: "workday" },
+  "2024-05-01": { name: "劳动节", type: "holiday" },
+  "2024-05-02": { name: "劳动节", type: "holiday" },
+  "2024-05-03": { name: "劳动节", type: "holiday" },
+  "2024-05-04": { name: "劳动节", type: "holiday" },
+  "2024-05-05": { name: "劳动节", type: "holiday" },
+  "2024-05-11": { name: "劳动节补班", type: "workday" },
+
+  // 端午: 06-08 ~ 06-10
+  "2024-06-08": { name: "端午节", type: "holiday" },
+  "2024-06-09": { name: "端午节", type: "holiday" },
+  "2024-06-10": { name: "端午节", type: "holiday" },
+
+  // 中秋: 09-15 ~ 09-17, 09-14(周六) 补班
+  "2024-09-14": { name: "中秋补班", type: "workday" },
+  "2024-09-15": { name: "中秋节", type: "holiday" },
+  "2024-09-16": { name: "中秋节", type: "holiday" },
+  "2024-09-17": { name: "中秋节", type: "holiday" },
+
+  // 国庆: 10-01 ~ 10-07, 09-29(周日) 10-12(周六) 补班
+  "2024-09-29": { name: "国庆补班", type: "workday" },
+  "2024-10-01": { name: "国庆节", type: "holiday" },
+  "2024-10-02": { name: "国庆节", type: "holiday" },
+  "2024-10-03": { name: "国庆节", type: "holiday" },
+  "2024-10-04": { name: "国庆节", type: "holiday" },
+  "2024-10-05": { name: "国庆节", type: "holiday" },
+  "2024-10-06": { name: "国庆节", type: "holiday" },
+  "2024-10-07": { name: "国庆节", type: "holiday" },
+  "2024-10-12": { name: "国庆补班", type: "workday" },
+
+  // ===== 2025 =====
+  "2025-01-01": { name: "元旦", type: "holiday" },
+
+  // 春节: 01-28 ~ 02-04, 01-26(周日) 02-08(周六) 补班
+  "2025-01-26": { name: "春节补班", type: "workday" },
+  "2025-01-28": { name: "春节", type: "holiday" },
+  "2025-01-29": { name: "春节", type: "holiday" },
+  "2025-01-30": { name: "春节", type: "holiday" },
+  "2025-01-31": { name: "春节", type: "holiday" },
+  "2025-02-01": { name: "春节", type: "holiday" },
+  "2025-02-02": { name: "春节", type: "holiday" },
+  "2025-02-03": { name: "春节", type: "holiday" },
+  "2025-02-04": { name: "春节", type: "holiday" },
+  "2025-02-08": { name: "春节补班", type: "workday" },
+
+  // 清明: 04-04 ~ 04-06
+  "2025-04-04": { name: "清明节", type: "holiday" },
+  "2025-04-05": { name: "清明节", type: "holiday" },
+  "2025-04-06": { name: "清明节", type: "holiday" },
+
+  // 劳动节: 05-01 ~ 05-05, 04-27(周日) 补班
+  "2025-04-27": { name: "劳动节补班", type: "workday" },
+  "2025-05-01": { name: "劳动节", type: "holiday" },
+  "2025-05-02": { name: "劳动节", type: "holiday" },
+  "2025-05-03": { name: "劳动节", type: "holiday" },
+  "2025-05-04": { name: "劳动节", type: "holiday" },
+  "2025-05-05": { name: "劳动节", type: "holiday" },
+
+  // 端午: 05-31 ~ 06-02
+  "2025-05-31": { name: "端午节", type: "holiday" },
+  "2025-06-01": { name: "端午节", type: "holiday" },
+  "2025-06-02": { name: "端午节", type: "holiday" },
+
+  // 国庆+中秋: 10-01 ~ 10-08, 09-28(周日) 10-11(周六) 补班
+  "2025-09-28": { name: "国庆补班", type: "workday" },
+  "2025-10-01": { name: "国庆节", type: "holiday" },
+  "2025-10-02": { name: "国庆节", type: "holiday" },
+  "2025-10-03": { name: "国庆节", type: "holiday" },
+  "2025-10-04": { name: "中秋节", type: "holiday" },
+  "2025-10-05": { name: "国庆节", type: "holiday" },
+  "2025-10-06": { name: "中秋节", type: "holiday" },
+  "2025-10-07": { name: "国庆节", type: "holiday" },
+  "2025-10-08": { name: "国庆节", type: "holiday" },
+  "2025-10-11": { name: "国庆补班", type: "workday" },
+
+  // ===== 2026 =====
+  "2026-01-01": { name: "元旦", type: "holiday" },
+  "2026-01-02": { name: "元旦", type: "holiday" },
+  "2026-01-03": { name: "元旦", type: "holiday" },
+
+  // 春节: 02-17 ~ 02-23, 02-28(周六) 补班（预计）
+  "2026-02-17": { name: "春节", type: "holiday" },
+  "2026-02-18": { name: "春节", type: "holiday" },
+  "2026-02-19": { name: "春节", type: "holiday" },
+  "2026-02-20": { name: "春节", type: "holiday" },
+  "2026-02-21": { name: "春节", type: "holiday" },
+  "2026-02-22": { name: "春节", type: "holiday" },
+  "2026-02-23": { name: "春节", type: "holiday" },
+  "2026-02-28": { name: "春节补班", type: "workday" },
+
+  // 清明: 04-05 ~ 04-07（预计）
+  "2026-04-05": { name: "清明节", type: "holiday" },
+  "2026-04-06": { name: "清明节", type: "holiday" },
+
+  // 劳动节: 05-01 ~ 05-05（预计）
+  "2026-05-01": { name: "劳动节", type: "holiday" },
+  "2026-05-02": { name: "劳动节", type: "holiday" },
+  "2026-05-03": { name: "劳动节", type: "holiday" },
+  "2026-05-04": { name: "劳动节", type: "holiday" },
+  "2026-05-05": { name: "劳动节", type: "holiday" },
+
+  // 端午: 06-19 ~ 06-21（预计）
+  "2026-06-19": { name: "端午节", type: "holiday" },
+  "2026-06-20": { name: "端午节", type: "holiday" },
+  "2026-06-21": { name: "端午节", type: "holiday" },
+
+  // 中秋: 09-25 ~ 09-27（预计）
+  "2026-09-25": { name: "中秋节", type: "holiday" },
+  "2026-09-26": { name: "中秋节", type: "holiday" },
+  "2026-09-27": { name: "中秋节", type: "holiday" },
+
+  // 国庆: 10-01 ~ 10-07, 补班预计
+  "2026-10-01": { name: "国庆节", type: "holiday" },
+  "2026-10-02": { name: "国庆节", type: "holiday" },
+  "2026-10-03": { name: "国庆节", type: "holiday" },
+  "2026-10-04": { name: "国庆节", type: "holiday" },
+  "2026-10-05": { name: "国庆节", type: "holiday" },
+  "2026-10-06": { name: "国庆节", type: "holiday" },
+  "2026-10-07": { name: "国庆节", type: "holiday" },
+
+  // ===== 2027 =====
+  "2027-01-01": { name: "元旦", type: "holiday" },
+
+  // 春节: 02-06 ~ 02-12（预计）
+  "2027-02-06": { name: "春节", type: "holiday" },
+  "2027-02-07": { name: "春节", type: "holiday" },
+  "2027-02-08": { name: "春节", type: "holiday" },
+  "2027-02-09": { name: "春节", type: "holiday" },
+  "2027-02-10": { name: "春节", type: "holiday" },
+  "2027-02-11": { name: "春节", type: "holiday" },
+  "2027-02-12": { name: "春节", type: "holiday" },
+
+  // 清明: 04-05 ~ 04-07（预计）
+  "2027-04-05": { name: "清明节", type: "holiday" },
+  "2027-04-06": { name: "清明节", type: "holiday" },
+
+  // 劳动节: 05-01 ~ 05-05（预计）
+  "2027-05-01": { name: "劳动节", type: "holiday" },
+  "2027-05-02": { name: "劳动节", type: "holiday" },
+  "2027-05-03": { name: "劳动节", type: "holiday" },
+
+  // 端午: 06-09 ~ 06-11（预计）
+  "2027-06-09": { name: "端午节", type: "holiday" },
+  "2027-06-10": { name: "端午节", type: "holiday" },
+  "2027-06-11": { name: "端午节", type: "holiday" },
+
+  // 中秋+国庆: 2027年中秋 10-01左右（预计）
+  "2027-10-01": { name: "国庆节", type: "holiday" },
+  "2027-10-02": { name: "国庆节", type: "holiday" },
+  "2027-10-03": { name: "国庆节", type: "holiday" },
+  "2027-10-04": { name: "中秋节", type: "holiday" },
+  "2027-10-05": { name: "国庆节", type: "holiday" },
+  "2027-10-06": { name: "国庆节", type: "holiday" },
+  "2027-10-07": { name: "国庆节", type: "holiday" },
 };
 
 // 农历节假日（格式：月-日）
@@ -185,34 +368,56 @@ export function getSolarTerm(date) {
 }
 
 /**
- * 获取指定日期的节假日信息
+ * 获取指定日期的节假日/放假/补班信息
  */
 export function getHoliday(date, lunar) {
-  const holidays = [];
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  const dateKey = `${y}-${m}-${d}`;
 
-  // 公历节假日
-  const mm = String(date.getMonth() + 1).padStart(2, "0");
-  const dd = String(date.getDate()).padStart(2, "0");
-  const solarKey = mm + dd;
-  if (SOLAR_HOLIDAYS[solarKey]) {
-    holidays.push({ ...SOLAR_HOLIDAYS[solarKey], type: "solar" });
+  // 优先检查官方放假补班安排
+  const schedule = HOLIDAY_SCHEDULE[dateKey];
+  if (schedule) {
+    return { name: schedule.name, type: schedule.type, days: 0 };
   }
 
-  // 农历节假日
+  // 检查公历节日
+  const solarKey = m + d;
+  if (SOLAR_HOLIDAYS[solarKey]) {
+    return { ...SOLAR_HOLIDAYS[solarKey], type: "solar" };
+  }
+
+  // 检查农历节日
   if (lunar) {
     const lunarKey = lunar.key;
     if (LUNAR_HOLIDAYS[lunarKey]) {
-      holidays.push({ ...LUNAR_HOLIDAYS[lunarKey], type: "lunar" });
+      return { ...LUNAR_HOLIDAYS[lunarKey], type: "lunar" };
     }
   }
 
-  // 节气
+  // 检查节气
   const term = getSolarTerm(date);
   if (term) {
-    holidays.push({ name: term, days: 0, type: "term" });
+    return { name: term, days: 0, type: "term" };
   }
 
-  return holidays;
+  return null;
+}
+
+/**
+ * 批量获取某月的放假补班映射（供日历使用）
+ */
+export function getMonthSchedule(year, month) {
+  const map = {};
+  const days = new Date(year, month, 0).getDate();
+  for (let d = 1; d <= days; d++) {
+    const key = `${year}-${String(month).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+    if (HOLIDAY_SCHEDULE[key]) {
+      map[d] = HOLIDAY_SCHEDULE[key];
+    }
+  }
+  return map;
 }
 
 /**
