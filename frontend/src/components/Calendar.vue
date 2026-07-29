@@ -246,24 +246,24 @@ function nextMonth() {
 }
 .cal-cell.weekend .cal-solar { color: var(--warning); }
 
-/* 法定放假 */
+/* 法定放假 — 绿色 */
 .cal-cell.holiday {
-  background: rgba(255, 80, 80, 0.1);
+  background: rgba(62, 207, 142, 0.1);
 }
-.cal-cell.holiday .cal-solar { color: var(--danger); font-weight: 600; }
+.cal-cell.holiday .cal-solar { color: var(--success); font-weight: 600; }
 .cal-cell.holiday .cal-lunar {
-  color: var(--danger);
+  color: var(--success);
   font-weight: 600;
   font-size: 9px;
 }
 
-/* 调休补班 */
+/* 调休补班 — 红色 */
 .cal-cell.workday {
-  background: rgba(255, 180, 60, 0.08);
+  background: rgba(255, 80, 80, 0.08);
 }
-.cal-cell.workday .cal-solar { color: var(--warning); }
+.cal-cell.workday .cal-solar { color: var(--danger); }
 .cal-cell.workday .cal-lunar {
-  color: var(--warning);
+  color: var(--danger);
   font-weight: 600;
   font-size: 9.5px;
 }
@@ -283,12 +283,12 @@ function nextMonth() {
   font-weight: 700;
 }
 .cal-badge-holiday {
-  background: var(--danger);
+  background: var(--success);
   color: #fff;
 }
 .cal-badge-workday {
-  background: var(--warning);
-  color: #000;
+  background: var(--danger);
+  color: #fff;
 }
 
 .cal-solar {
