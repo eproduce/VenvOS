@@ -16,13 +16,13 @@
           class="start-menu-item"
           @click="openApp(item.app)"
         >
-          <AppIcon :name="item.icon" :size="28" />
+          <AppIcon :name="item.icon" :size="22" />
           <span class="item-label">{{ item.name }}</span>
         </div>
       </div>
       <div class="start-menu-footer">
         <div class="start-menu-item" @click="showAbout = true">
-          <AppIcon name="info" :size="28" />
+          <AppIcon name="info" :size="22" />
           <span class="item-label">关于 VenvOS</span>
         </div>
       </div>
@@ -106,8 +106,8 @@ function openApp(appName) {
 .start-menu-item {
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 11px 16px;
+  gap: 12px;
+  padding: 9px 14px;
   border-radius: var(--radius-sm);
   cursor: pointer;
   transition: all var(--transition);
@@ -119,7 +119,7 @@ function openApp(appName) {
 }
 .start-menu-item svg { opacity: 0.65; }
 .start-menu-item:hover svg { opacity: 1; color: var(--accent); }
-.item-label { font-size: 14px; }
+.item-label { font-size: 13px; }
 
 .start-menu-footer {
   border-top: 1px solid var(--border-light);
