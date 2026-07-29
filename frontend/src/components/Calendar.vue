@@ -51,13 +51,17 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useOSStore } from "../store/index.js";
 import { solarToLunar, getHoliday, isToday, isWeekend } from "../lunar.js";
+import { getSchedule } from "../holidays.js";
 import AppIcon from "./AppIcon.vue";
 
 const store = useOSStore();
 const viewDate = ref(new Date());
+
+// 触发节假日数据加载（异步，不阻塞渲染）
+onMounted(() => { getSchedule(); });
 
 const viewYear = computed(() => viewDate.value.getFullYear());
 const viewMonth = computed(() => viewDate.value.getMonth() + 1);

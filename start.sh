@@ -7,6 +7,8 @@
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+VENV_PYTHON="$SCRIPT_DIR/.venv/bin/python3"
+VENV_PIP="$SCRIPT_DIR/.venv/bin/pip"
 BACKEND_DIR="$SCRIPT_DIR/backend"
 FRONTEND_DIR="$SCRIPT_DIR/frontend"
 
@@ -47,9 +49,9 @@ if ! command -v npm &>/dev/null; then
 fi
 
 # 检查 Python 依赖
-python3 -c "import sanic" 2>/dev/null || {
+$VENV_PYTHON -c "import sanic" 2>/dev/null || {
     echo -e "${YELLOW}⚠ sanic 未安装，正在安装后端依赖...${NC}"
-    pip install -r "$BACKEND_DIR/requirements.txt"
+    $VENV_PIP install -r "$BACKEND_DIR/requirements.txt"
 }
 
 # 检查前端依赖
@@ -63,7 +65,7 @@ fi
 echo ""
 echo -e "${BLUE}[2/4] 启动 Sanic 后端 (端口 8000)...${NC}"
 cd "$BACKEND_DIR"
-python3 app.py &
+$VENV_PYTHON app.py &
 BACKEND_PID=$!
 sleep 1
 

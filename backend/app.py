@@ -8,6 +8,7 @@ from sanic.exceptions import NotFound
 
 from api.files import files_bp
 from api.disks import disks_bp
+from api.holidays import holidays_bp
 
 # 获取前端构建目录（开发时指向 frontend 目录，生产时指向 dist）
 BASE_DIR = Path(__file__).parent.parent
@@ -19,6 +20,7 @@ app = Sanic("VenvOS")
 # 注册 API 蓝图
 app.blueprint(files_bp)
 app.blueprint(disks_bp)
+app.blueprint(holidays_bp)
 
 
 # ==================== 静态文件服务 ====================

@@ -233,6 +233,16 @@ const HOLIDAY_SCHEDULE = {
   "2027-10-07": { name: "国庆节", type: "holiday" },
 };
 
+// 活跃的放假安排（可被外部动态注入以覆盖默认数据）
+let _activeSchedule = HOLIDAY_SCHEDULE;
+
+/** 从外部注入新的放假安排数据 */
+export function setHolidaySchedule(newSchedule) {
+  if (newSchedule && Object.keys(newSchedule).length > 0) {
+    _activeSchedule = newSchedule;
+  }
+}
+
 // 农历节假日（格式：月-日）
 const LUNAR_HOLIDAYS = {
   "1-1":  { name: "春节", days: 7 },
@@ -377,7 +387,7 @@ export function getHoliday(date, lunar) {
   const dateKey = `${y}-${m}-${d}`;
 
   // 优先检查官方放假补班安排
-  const schedule = HOLIDAY_SCHEDULE[dateKey];
+  const schedule = _activeSchedule[dateKey];
   if (schedule) {
     return { name: schedule.name, type: schedule.type, days: 0 };
   }
@@ -413,8 +423,8 @@ export function getMonthSchedule(year, month) {
   const days = new Date(year, month, 0).getDate();
   for (let d = 1; d <= days; d++) {
     const key = `${year}-${String(month).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
-    if (HOLIDAY_SCHEDULE[key]) {
-      map[d] = HOLIDAY_SCHEDULE[key];
+    if (_activeSchedule[key]) {
+      map[d] = _activeSchedule[key];
     }
   }
   return map;
