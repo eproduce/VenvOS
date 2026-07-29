@@ -48,8 +48,8 @@ function onContextMenu() {
   border-color: rgba(255, 255, 255, 0.08);
 }
 .desktop-icon.selected {
-  background: rgba(108, 140, 255, 0.12);
-  border-color: rgba(108, 140, 255, 0.3);
+  background: rgba(59, 130, 246, 0.12);
+  border-color: rgba(59, 130, 246, 0.3);
 }
 .icon-wrapper {
   width: 42px;

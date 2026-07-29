@@ -116,7 +116,7 @@ function onTaskbarAppClick(win) {
 }
 .taskbar-app-btn:hover svg { opacity: 1; }
 .taskbar-app-btn.active {
-  background: rgba(108, 140, 255, 0.15);
+  background: rgba(59, 130, 246, 0.15);
   color: var(--text-primary);
 }
 .taskbar-app-btn.active svg {

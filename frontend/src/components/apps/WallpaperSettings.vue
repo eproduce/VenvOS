@@ -89,7 +89,7 @@ function selectWallpaper(id) {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(108,140,255,0.3);
+  background: rgba(59,130,246,0.3);
 }
 
 .ws-name {

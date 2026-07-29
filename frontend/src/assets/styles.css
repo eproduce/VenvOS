@@ -25,11 +25,11 @@
   --text-muted: #6c6c7e;
 
   /* Brand */
-  --accent: #6c8cff;
-  --accent-hover: #86a1ff;
-  --accent-soft: rgba(108, 140, 255, 0.12);
-  --accent-glow: rgba(108, 140, 255, 0.25);
-  --accent-subtle: rgba(108, 140, 255, 0.06);
+  --accent: #3b82f6;
+  --accent-hover: #5b9cf6;
+  --accent-soft: rgba(59, 130, 246, 0.12);
+  --accent-glow: rgba(59, 130, 246, 0.2);
+  --accent-subtle: rgba(59, 130, 246, 0.06);
 
   /* Semantic */
   --danger: #ff5f6b;
@@ -116,11 +116,11 @@ button {
 .btn-primary {
   background: var(--accent);
   color: #fff;
-  box-shadow: 0 2px 8px rgba(108, 140, 255, 0.25);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.25);
 }
 .btn-primary:hover {
   background: var(--accent-hover);
-  box-shadow: 0 4px 16px rgba(108, 140, 255, 0.35);
+  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.35);
   transform: translateY(-0.5px);
 }
 .btn-primary:active { transform: translateY(0); }

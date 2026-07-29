@@ -96,7 +96,7 @@ function openApp(appName) {
   align-items: center;
   gap: 10px;
   padding: 18px 20px;
-  background: linear-gradient(135deg, rgba(108, 140, 255, 0.8), rgba(108, 140, 255, 0.5));
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.8), rgba(59, 130, 246, 0.45));
   color: #fff;
 }
 .os-name { font-size: 17px; font-weight: 700; letter-spacing: 0.02em; }
@@ -157,7 +157,7 @@ function openApp(appName) {
   align-items: center;
   gap: 12px;
   padding: 20px 24px;
-  background: linear-gradient(135deg, rgba(108, 140, 255, 0.6), rgba(80, 110, 230, 0.4));
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.6), rgba(40, 100, 220, 0.35));
   color: #fff;
 }
 .about-header h2 { font-size: 20px; font-weight: 700; flex: 1; }
