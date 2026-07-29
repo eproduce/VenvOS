@@ -389,7 +389,7 @@ export function getHoliday(date, lunar) {
   // 优先检查官方放假补班安排
   const schedule = _activeSchedule[dateKey];
   if (schedule) {
-    return { name: schedule.name, type: schedule.type, days: 0 };
+    return { name: schedule.name || "", type: schedule.type || "solar", days: 0 };
   }
 
   // 检查公历节日

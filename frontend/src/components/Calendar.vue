@@ -93,7 +93,7 @@ const calendarCells = computed(() => {
       current: false,
       isToday: false,
       weekend: isWeekend(d),
-      lunarText: holiday?.type === "workday" ? "补班" : holiday?.type === "holiday" ? holiday.name : lunar.dayName,
+      lunarText: holiday?.type === "workday" ? "补班" : holiday?.type === "holiday" ? (holiday.name || "放假") : (lunar.dayName || ""),
       holiday: holiday || null,
     });
   }
@@ -107,13 +107,13 @@ const calendarCells = computed(() => {
     // 决定农历文本显示
     let lunarText;
     if (holiday?.type === "holiday") {
-      lunarText = holiday.name; // 放假直接显示节日名
+      lunarText = holiday.name || "放假";
     } else if (holiday?.type === "workday") {
-      lunarText = "补班"; // 补班日
+      lunarText = "补班";
     } else if (lunar.dayName === "初一") {
       lunarText = lunar.monthName;
     } else {
-      lunarText = lunar.dayName;
+      lunarText = lunar.dayName || "";
     }
 
     cells.push({
@@ -122,7 +122,7 @@ const calendarCells = computed(() => {
       current: true,
       isToday: isToday(d, today),
       weekend: isWeekend(d),
-      lunarText,
+      lunarText: lunarText || lunar.dayName || "",
       holiday: holiday || null,
     });
   }
@@ -139,7 +139,7 @@ const calendarCells = computed(() => {
       current: false,
       isToday: false,
       weekend: isWeekend(d),
-      lunarText: holiday?.type === "workday" ? "补班" : holiday?.type === "holiday" ? holiday.name : lunar.dayName,
+      lunarText: holiday?.type === "workday" ? "补班" : holiday?.type === "holiday" ? (holiday.name || "放假") : (lunar.dayName || ""),
       holiday: holiday || null,
     });
   }
