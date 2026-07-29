@@ -1,7 +1,7 @@
 <template>
   <div
     class="desktop"
-    @click.self="store.startMenuOpen = false"
+    @click.self="onDesktopClick"
     @contextmenu.prevent="onContextMenu"
     @dblclick.self="openApp('FileManager')"
   >
@@ -61,7 +61,7 @@
 </template>
 
 <script setup>
-import { reactive } from "vue";
+import { reactive, onMounted, onUnmounted } from "vue";
 import { useOSStore, getDynamicWallpaper } from "../store/index.js";
 import DesktopIcon from "./DesktopIcon.vue";
 import AppIcon from "./AppIcon.vue";
@@ -81,10 +81,27 @@ function onContextMenu(e) {
   store.startMenuOpen = false;
 }
 
+function onDesktopClick() {
+  store.startMenuOpen = false;
+  contextMenu.show = false;
+}
+
 function openApp(appName) {
   contextMenu.show = false;
   store.openApp(appName);
 }
+
+// 点击桌面空白区域或任意位置关闭右键菜单
+function onDocumentMouseDown(e) {
+  if (!contextMenu.show) return;
+  // 检查点击是否在右键菜单内
+  const menu = document.querySelector(".context-menu");
+  if (menu && menu.contains(e.target)) return;
+  contextMenu.show = false;
+}
+
+onMounted(() => document.addEventListener("mousedown", onDocumentMouseDown, true));
+onUnmounted(() => document.removeEventListener("mousedown", onDocumentMouseDown, true));
 </script>
 
 <style scoped>
