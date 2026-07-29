@@ -86,14 +86,15 @@ const calendarCells = computed(() => {
   for (let i = startOffset - 1; i >= 0; i--) {
     const d = new Date(year, month - 1, prevLastDay.getDate() - i);
     const lunar = solarToLunar(d);
+    const holiday = getHoliday(d, lunar);
     cells.push({
       day: d.getDate(),
       date: d,
       current: false,
       isToday: false,
       weekend: isWeekend(d),
-      lunarText: lunar.dayName,
-      holiday: null,
+      lunarText: holiday?.type === "workday" ? "补班" : holiday?.type === "holiday" ? holiday.name : lunar.dayName,
+      holiday: holiday || null,
     });
   }
 
@@ -131,14 +132,15 @@ const calendarCells = computed(() => {
   for (let i = 1; i <= remaining; i++) {
     const d = new Date(year, month + 1, i);
     const lunar = solarToLunar(d);
+    const holiday = getHoliday(d, lunar);
     cells.push({
       day: i,
       date: d,
       current: false,
       isToday: false,
       weekend: isWeekend(d),
-      lunarText: lunar.dayName,
-      holiday: null,
+      lunarText: holiday?.type === "workday" ? "补班" : holiday?.type === "holiday" ? holiday.name : lunar.dayName,
+      holiday: holiday || null,
     });
   }
 
@@ -241,6 +243,8 @@ function nextMonth() {
 }
 .cal-cell:hover { background: rgba(255,255,255,0.05); }
 .cal-cell.other { opacity: 0.3; }
+.cal-cell.other.workday,
+.cal-cell.other.holiday { opacity: 0.65; }
 .cal-cell.today {
   background: var(--accent-soft);
 }
