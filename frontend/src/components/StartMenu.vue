@@ -1,7 +1,7 @@
 <template>
   <div
     class="start-menu-backdrop"
-    @click="store.startMenuOpen = false"
+    @mousedown.self="store.startMenuOpen = false"
   >
     <div class="start-menu" @click.stop>
       <div class="start-menu-header">
@@ -75,9 +75,8 @@ function openApp(appName) {
 .start-menu {
   position: absolute;
   bottom: calc(var(--taskbar-height) + 10px);
-  left: 50%;
-  transform: translateX(-50%);
-  width: 320px;
+  left: 10px;
+  width: 300px;
   background: rgba(22, 22, 40, 0.92);
   backdrop-filter: blur(28px) saturate(1.8);
   -webkit-backdrop-filter: blur(28px) saturate(1.8);
@@ -88,8 +87,8 @@ function openApp(appName) {
   animation: menuSlideUp 0.2s cubic-bezier(0.2, 0, 0.2, 1);
 }
 @keyframes menuSlideUp {
-  from { opacity: 0; transform: translateX(-50%) translateY(12px); }
-  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .start-menu-header {

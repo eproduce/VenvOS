@@ -1,5 +1,10 @@
 <template>
   <div class="taskbar">
+    <div class="taskbar-left">
+      <button class="start-btn" :class="{ active: store.startMenuOpen }" @click.stop="store.toggleStartMenu()">
+        <AppIcon name="logo" :size="20" />
+      </button>
+    </div>
     <div class="taskbar-center">
       <div class="taskbar-apps">
         <button
@@ -15,7 +20,7 @@
       </div>
     </div>
     <div class="taskbar-right">
-      <div class="system-tray" @click="store.toggleStartMenu()">
+      <div class="system-tray">
         <span class="tray-time">{{ store.currentTime }}</span>
         <span class="tray-date">{{ store.currentDate }}</span>
       </div>
@@ -49,10 +54,33 @@ function onTaskbarAppClick(win) {
   border-top: 1px solid rgba(255, 255, 255, 0.06);
   display: flex;
   align-items: center;
-  justify-content: center;
-  padding: 0 12px;
+  padding: 0 8px;
   z-index: 100;
   position: relative;
+}
+
+.taskbar-left {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.start-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition);
+}
+.start-btn:hover {
+  background: var(--accent-soft);
+}
+.start-btn.active {
+  background: var(--accent-soft);
 }
 
 .taskbar-center {
@@ -113,11 +141,6 @@ function onTaskbarAppClick(win) {
   align-items: flex-end;
   padding: 4px 10px;
   border-radius: 8px;
-  cursor: pointer;
-  transition: background var(--transition);
-}
-.system-tray:hover {
-  background: rgba(255, 255, 255, 0.04);
 }
 .tray-time {
   font-size: 12.5px;
