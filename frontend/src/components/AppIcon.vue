@@ -98,9 +98,9 @@
     </template>
     <!-- Logo -->
     <template v-else-if="name === 'logo'">
-      <circle cx="12" cy="12" r="11" />
-      <circle cx="12" cy="12" r="7" />
-      <circle cx="12" cy="12" r="2.5" />
+      <circle cx="12" cy="12" r="11" stroke-width="2.5" />
+      <circle cx="12" cy="12" r="7" stroke-width="2" />
+      <circle cx="12" cy="12" r="2.5" stroke-width="2.5" fill="currentColor" stroke="none" />
     </template>
     <!-- 设置 -->
     <template v-else-if="name === 'settings'">
