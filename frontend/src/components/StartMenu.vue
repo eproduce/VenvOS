@@ -27,13 +27,35 @@
         </div>
       </div>
     </div>
+
+    <!-- 关于弹窗 -->
+    <div v-if="showAbout" class="about-overlay" @click.self="showAbout = false">
+      <div class="about-dialog">
+        <div class="about-header">
+          <span class="about-logo">◆</span>
+          <h2>VenvOS</h2>
+          <button class="about-close" @click="showAbout = false">✕</button>
+        </div>
+        <div class="about-body">
+          <div class="about-row"><span class="about-label">版本</span><span>v1.0.0</span></div>
+          <div class="about-row"><span class="about-label">前端</span><span>Vue 3 + Pinia + Vite</span></div>
+          <div class="about-row"><span class="about-label">后端</span><span>Python Sanic</span></div>
+          <div class="about-row"><span class="about-label">作者</span><span>eproduce</span></div>
+        </div>
+        <div class="about-footer">
+          <button class="btn btn-primary" @click="showAbout = false">确定</button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
+import { ref } from "vue";
 import { useOSStore } from "../store/index.js";
 
 const store = useOSStore();
+const showAbout = ref(false);
 
 function openApp(appName) {
   store.startMenuOpen = false;
@@ -93,5 +115,81 @@ function openApp(appName) {
 .start-menu-footer {
   border-top: 1px solid var(--border-color);
   padding: 8px;
+}
+
+/* 关于弹窗 */
+.about-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.about-dialog {
+  width: 380px;
+  background: #1e1e30;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  animation: fadeIn 0.2s ease;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+.about-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 24px;
+  background: var(--accent);
+  color: #fff;
+}
+.about-logo { font-size: 32px; }
+.about-header h2 { font-size: 22px; font-weight: 700; flex: 1; }
+.about-close {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: none;
+  transition: background var(--transition);
+}
+.about-close:hover { background: rgba(255,255,255,0.3); }
+
+.about-body {
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.about-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  color: var(--text-primary);
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+.about-label {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.about-footer {
+  padding: 14px 24px;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  justify-content: flex-end;
 }
 </style>
