@@ -10,7 +10,7 @@
         :class="{ active: currentPath === item.path }"
         @click="navigateTo(item.path)"
       >
-        <span class="si-icon">{{ item.icon }}</span>
+        <AppIcon :name="item.icon" :size="16" class="si-icon" />
         <span class="si-label">{{ item.label }}</span>
       </div>
     </div>
@@ -20,9 +20,15 @@
       <!-- 工具栏 -->
       <div class="fm-toolbar">
         <div class="toolbar-nav">
-          <button class="btn btn-ghost btn-sm" @click="goBack" :disabled="historyIndex <= 0" title="后退">◀</button>
-          <button class="btn btn-ghost btn-sm" @click="goForward" :disabled="historyIndex >= history.length - 1" title="前进">▶</button>
-          <button class="btn btn-ghost btn-sm" @click="refresh" title="刷新">🔄</button>
+          <button class="btn btn-ghost btn-sm" @click="goBack" :disabled="historyIndex <= 0" title="后退">
+            <AppIcon name="arrow-left" :size="14" />
+          </button>
+          <button class="btn btn-ghost btn-sm" @click="goForward" :disabled="historyIndex >= history.length - 1" title="前进">
+            <AppIcon name="arrow-right" :size="14" />
+          </button>
+          <button class="btn btn-ghost btn-sm" @click="refresh" title="刷新">
+            <AppIcon name="refresh" :size="14" />
+          </button>
         </div>
         <div class="toolbar-path">
           <input
@@ -39,13 +45,21 @@
             @keydown.enter="doSearch"
             placeholder="搜索文件..."
           />
-          <button class="btn btn-ghost btn-sm" @click="doSearch">🔍</button>
+          <button class="btn btn-ghost btn-sm" @click="doSearch">
+            <AppIcon name="search" :size="14" />
+          </button>
         </div>
         <div class="toolbar-actions">
-          <button class="btn btn-primary btn-sm" @click="showCreateMenu = !showCreateMenu">＋ 新建</button>
+          <button class="btn btn-primary btn-sm" @click="showCreateMenu = !showCreateMenu">
+            <AppIcon name="plus" :size="13" /> 新建
+          </button>
           <div v-if="showCreateMenu" class="create-dropdown">
-            <div class="context-menu-item" @click="createNew('folder')">📁 新建文件夹</div>
-            <div class="context-menu-item" @click="createNew('file')">📄 新建文件</div>
+            <div class="context-menu-item" @click="createNew('folder')">
+              <AppIcon name="folder" :size="13" /> 新建文件夹
+            </div>
+            <div class="context-menu-item" @click="createNew('file')">
+              <AppIcon name="file" :size="13" /> 新建文件
+            </div>
           </div>
         </div>
       </div>
@@ -87,7 +101,7 @@
           @contextmenu.stop.prevent="onItemContextMenu(item, $event)"
         >
           <span class="col-name">
-            <span class="item-icon">{{ item.type === 'directory' ? '📁' : getFileIcon(item.extension) }}</span>
+            <AppIcon :name="item.type === 'directory' ? 'folder' : getFileIcon(item.extension)" :size="18" class="item-icon" />
             <span class="item-name" v-if="renamingItem?.path !== item.path">{{ item.name }}</span>
             <input
               v-else
@@ -114,26 +128,26 @@
     >
       <template v-if="contextMenu.item">
         <div class="context-menu-item" @click="openItem(contextMenu.item)">
-          <span>📂</span> 打开
+          <AppIcon name="folder" :size="13" /> 打开
         </div>
         <div class="context-menu-separator"></div>
         <div class="context-menu-item" @click="startRename(contextMenu.item)">
-          <span>✏️</span> 重命名
+          <AppIcon name="edit" :size="13" /> 重命名
         </div>
         <div class="context-menu-item" @click="deleteItem(contextMenu.item)">
-          <span>🗑️</span> 删除
+          <AppIcon name="trash" :size="13" /> 删除
         </div>
       </template>
       <template v-else>
         <div class="context-menu-item" @click="createNew('folder')">
-          <span>📁</span> 新建文件夹
+          <AppIcon name="folder" :size="13" /> 新建文件夹
         </div>
         <div class="context-menu-item" @click="createNew('file')">
-          <span>📄</span> 新建文件
+          <AppIcon name="file" :size="13" /> 新建文件
         </div>
         <div class="context-menu-separator"></div>
         <div class="context-menu-item" @click="refresh">
-          <span>🔄</span> 刷新
+          <AppIcon name="refresh" :size="13" /> 刷新
         </div>
       </template>
     </div>
@@ -143,16 +157,17 @@
 <script setup>
 import { ref, reactive, computed, watch, nextTick } from "vue";
 import api from "../../api.js";
+import AppIcon from "../AppIcon.vue";
 
 const props = defineProps({ windowId: Number, params: Object });
 
 // 快速访问
 const quickAccess = [
-  { label: "主目录", icon: "🏠", path: "/Users" },
-  { label: "桌面", icon: "🖥️", path: "/Users/" + (props.params?.username || "") + "/Desktop" },
-  { label: "文档", icon: "📄", path: "/Users/" + (props.params?.username || "") + "/Documents" },
-  { label: "下载", icon: "⬇️", path: "/Users/" + (props.params?.username || "") + "/Downloads" },
-  { label: "根目录", icon: "💻", path: "/" },
+  { label: "主目录", icon: "folder", path: "/Users" },
+  { label: "桌面", icon: "monitor", path: "/Users/" + (props.params?.username || "") + "/Desktop" },
+  { label: "文档", icon: "file", path: "/Users/" + (props.params?.username || "") + "/Documents" },
+  { label: "下载", icon: "save", path: "/Users/" + (props.params?.username || "") + "/Downloads" },
+  { label: "根目录", icon: "disk", path: "/" },
 ];
 
 const currentPath = ref(props.params?.path || "/Users");
@@ -359,15 +374,7 @@ function formatDate(iso) {
 }
 
 function getFileIcon(ext) {
-  const map = {
-    ".txt": "📝", ".md": "📘", ".json": "📋", ".xml": "📋",
-    ".png": "🖼️", ".jpg": "🖼️", ".jpeg": "🖼️", ".gif": "🖼️", ".svg": "🖼️",
-    ".mp3": "🎵", ".wav": "🎵", ".mp4": "🎬", ".avi": "🎬",
-    ".zip": "📦", ".tar": "📦", ".gz": "📦",
-    ".py": "🐍", ".js": "📜", ".ts": "📜", ".html": "🌐", ".css": "🎨",
-    ".pdf": "📕", ".doc": "📄", ".docx": "📄", ".xls": "📊",
-  };
-  return map[ext] || "📄";
+  return "file";
 }
 
 // 初始化

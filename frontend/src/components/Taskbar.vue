@@ -1,10 +1,6 @@
 <template>
   <div class="taskbar">
-    <div class="taskbar-left">
-      <button class="start-btn" :class="{ active: store.startMenuOpen }" @click="store.toggleStartMenu()">
-        <span class="logo">◆</span>
-      </button>
-
+    <div class="taskbar-center">
       <div class="taskbar-apps">
         <button
           v-for="win in store.windows"
@@ -13,13 +9,13 @@
           :class="{ active: store.activeWindowId === win.id && !win.minimized }"
           @click="onTaskbarAppClick(win)"
         >
-          <span>{{ win.icon }}</span>
+          <AppIcon :name="win.icon" :size="16" />
           <span class="app-label">{{ win.title }}</span>
         </button>
       </div>
     </div>
     <div class="taskbar-right">
-      <div class="system-tray">
+      <div class="system-tray" @click="store.toggleStartMenu()">
         <span class="tray-time">{{ store.currentTime }}</span>
         <span class="tray-date">{{ store.currentDate }}</span>
       </div>
@@ -29,6 +25,7 @@
 
 <script setup>
 import { useOSStore } from "../store/index.js";
+import AppIcon from "./AppIcon.vue";
 
 const store = useOSStore();
 
@@ -46,95 +43,87 @@ function onTaskbarAppClick(win) {
 <style scoped>
 .taskbar {
   height: var(--taskbar-height);
-  background: var(--bg-taskbar);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-top: 1px solid var(--border-color);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 8px;
-  z-index: 100;
-  position: relative;
-}
-.taskbar-left {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex: 1;
-  min-width: 0;
-}
-.taskbar-right {
-  display: flex;
-  align-items: center;
-}
-
-.start-btn {
-  width: 38px;
-  height: 34px;
-  border-radius: var(--radius-sm);
-  background: transparent;
-  color: #fff;
-  font-size: 18px;
+  background: rgba(12, 12, 24, 0.82);
+  backdrop-filter: blur(24px) saturate(1.8);
+  -webkit-backdrop-filter: blur(24px) saturate(1.8);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all var(--transition);
+  padding: 0 12px;
+  z-index: 100;
+  position: relative;
 }
-.start-btn:hover, .start-btn.active {
-  background: rgba(124, 92, 252, 0.2);
-}
-.logo {
-  font-size: 20px;
-  color: var(--accent);
+
+.taskbar-center {
+  flex: 1;
+  display: flex;
+  justify-content: center;
 }
 
 .taskbar-apps {
   display: flex;
-  gap: 2px;
+  gap: 4px;
   overflow-x: auto;
-  max-width: calc(100% - 50px);
 }
 .taskbar-apps::-webkit-scrollbar { height: 0; }
 
 .taskbar-app-btn {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 4px 12px;
-  height: 34px;
-  border-radius: var(--radius-sm);
+  gap: 7px;
+  padding: 5px 14px;
+  height: 36px;
+  border-radius: 8px;
   background: transparent;
-  color: var(--text-secondary);
-  font-size: 12px;
+  color: var(--text-muted);
+  font-size: 11.5px;
   white-space: nowrap;
-  border: 1px solid transparent;
+  transition: all var(--transition);
 }
+.taskbar-app-btn svg { opacity: 0.7; }
 .taskbar-app-btn:hover {
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-secondary);
 }
+.taskbar-app-btn:hover svg { opacity: 1; }
 .taskbar-app-btn.active {
-  background: rgba(124, 92, 252, 0.15);
-  border-color: var(--accent);
-  color: #fff;
+  background: rgba(108, 140, 255, 0.15);
+  color: var(--text-primary);
+}
+.taskbar-app-btn.active svg {
+  opacity: 1;
+  color: var(--accent);
 }
 .app-label {
-  max-width: 100px;
+  max-width: 90px;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
+.taskbar-right {
+  display: flex;
+  align-items: center;
+  position: absolute;
+  right: 12px;
+}
 .system-tray {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  padding: 0 8px;
-  cursor: default;
+  padding: 4px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background var(--transition);
+}
+.system-tray:hover {
+  background: rgba(255, 255, 255, 0.04);
 }
 .tray-time {
-  font-size: 13px;
+  font-size: 12.5px;
   color: var(--text-primary);
-  font-weight: 500;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
 }
 .tray-date {
   font-size: 10px;

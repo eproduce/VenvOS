@@ -9,13 +9,19 @@
     <!-- 标题栏 -->
     <div class="window-titlebar" @mousedown.stop="onDragStart">
       <div class="titlebar-left">
-        <span class="title-icon">{{ window.icon }}</span>
+        <AppIcon :name="window.icon" :size="14" class="title-icon" />
         <span class="title-text">{{ window.title }}</span>
       </div>
       <div class="titlebar-actions">
-        <button class="title-btn minimize" @click.stop="store.minimizeWindow(window.id)" title="最小化">─</button>
-        <button class="title-btn maximize" @click.stop="store.maximizeWindow(window.id)" title="最大化">☐</button>
-        <button class="title-btn close" @click.stop="store.closeWindow(window.id)" title="关闭">✕</button>
+        <button class="title-btn" @click.stop="store.minimizeWindow(window.id)" title="最小化">
+          <AppIcon name="minimize" :size="12" />
+        </button>
+        <button class="title-btn" @click.stop="store.maximizeWindow(window.id)" title="最大化">
+          <AppIcon name="maximize" :size="12" />
+        </button>
+        <button class="title-btn close-btn" @click.stop="store.closeWindow(window.id)" title="关闭">
+          <AppIcon name="x" :size="12" />
+        </button>
       </div>
     </div>
 
@@ -40,7 +46,7 @@
         :params="window.params"
       />
       <div v-else class="app-placeholder">
-        <span style="font-size: 48px;">{{ window.icon }}</span>
+        <AppIcon :name="window.icon" :size="48" />
         <h3>{{ window.title }}</h3>
       </div>
     </div>
@@ -66,6 +72,7 @@ import FileManager from "./apps/FileManager.vue";
 import DiskManager from "./apps/DiskManager.vue";
 import SystemInfo from "./apps/SystemInfo.vue";
 import Notepad from "./apps/Notepad.vue";
+import AppIcon from "./AppIcon.vue";
 
 const props = defineProps({
   window: Object,
@@ -186,20 +193,24 @@ onUnmounted(() => {
 <style scoped>
 .window {
   position: absolute;
-  background: var(--bg-window);
-  border: 1px solid var(--border-color);
+  background: rgba(18, 18, 34, 0.88);
+  backdrop-filter: blur(20px) saturate(1.6);
+  -webkit-backdrop-filter: blur(20px) saturate(1.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 0 0.5px rgba(255, 255, 255, 0.04);
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  transition: box-shadow var(--transition);
+  transition: box-shadow var(--transition), border-color var(--transition);
 }
 .window.is-active {
-  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--accent);
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(108, 140, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.12);
 }
 .window.maximized {
   border-radius: 0 !important;
+  border: none;
 }
 
 /* 标题栏 */
@@ -207,9 +218,10 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 38px;
-  background: var(--bg-window-title);
-  padding: 0 6px;
+  height: 40px;
+  background: rgba(14, 14, 28, 0.8);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 0 8px;
   cursor: grab;
   flex-shrink: 0;
 }
@@ -222,38 +234,48 @@ onUnmounted(() => {
   gap: 8px;
   min-width: 0;
 }
-.title-icon { font-size: 16px; }
+.title-icon {
+  color: var(--accent);
+  opacity: 0.8;
+  flex-shrink: 0;
+}
 .title-text {
   font-size: 12px;
+  font-weight: 600;
   color: var(--text-secondary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  letter-spacing: 0.02em;
 }
 .titlebar-actions {
   display: flex;
-  gap: 2px;
+  gap: 4px;
 }
 .title-btn {
-  width: 28px;
-  height: 26px;
-  border-radius: var(--radius-sm);
-  background: transparent;
-  color: var(--text-secondary);
-  font-size: 12px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  color: transparent;
+  font-size: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all var(--transition);
+  padding: 0;
 }
-.title-btn:hover { background: rgba(255,255,255,0.06); color: var(--text-primary); }
-.title-btn.close:hover { background: var(--danger); color: #fff; }
+.title-btn svg { opacity: 0; }
+.title-btn:hover { background: rgba(255, 255, 255, 0.35); }
+.title-btn.close-btn { background: rgba(255, 95, 107, 0.5); }
+.title-btn.close-btn:hover { background: var(--danger); }
 
 /* 内容区 */
 .window-body {
   flex: 1;
   overflow: hidden;
   display: flex;
+  background: rgba(14, 14, 26, 0.5);
 }
 
 /* 调整大小手柄 */
@@ -282,4 +304,5 @@ onUnmounted(() => {
   gap: 12px;
   color: var(--text-muted);
 }
+.app-placeholder h3 { font-weight: 600; font-size: 15px; }
 </style>

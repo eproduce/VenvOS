@@ -5,7 +5,7 @@
   >
     <div class="start-menu" @click.stop>
       <div class="start-menu-header">
-        <span class="os-logo">◆</span>
+        <AppIcon name="logo" :size="28" />
         <span class="os-name">VenvOS</span>
         <span class="os-ver">v1.0</span>
       </div>
@@ -16,13 +16,13 @@
           class="start-menu-item"
           @click="openApp(item.app)"
         >
-          <span class="item-icon">{{ item.icon }}</span>
+          <AppIcon :name="item.icon" :size="18" />
           <span class="item-label">{{ item.name }}</span>
         </div>
       </div>
       <div class="start-menu-footer">
         <div class="start-menu-item" @click="showAbout = true">
-          <span class="item-icon">ℹ️</span>
+          <AppIcon name="info" :size="18" />
           <span class="item-label">关于 VenvOS</span>
         </div>
       </div>
@@ -32,9 +32,11 @@
     <div v-if="showAbout" class="about-overlay" @click.self="showAbout = false">
       <div class="about-dialog">
         <div class="about-header">
-          <span class="about-logo">◆</span>
+          <AppIcon name="logo" :size="32" />
           <h2>VenvOS</h2>
-          <button class="about-close" @click="showAbout = false">✕</button>
+          <button class="about-close" @click="showAbout = false">
+            <AppIcon name="x" :size="16" />
+          </button>
         </div>
         <div class="about-body">
           <div class="about-row"><span class="about-label">版本</span><span>v1.0.0</span></div>
@@ -53,6 +55,7 @@
 <script setup>
 import { ref } from "vue";
 import { useOSStore } from "../store/index.js";
+import AppIcon from "./AppIcon.vue";
 
 const store = useOSStore();
 const showAbout = ref(false);
@@ -71,49 +74,56 @@ function openApp(appName) {
 }
 .start-menu {
   position: absolute;
-  bottom: calc(var(--taskbar-height) + 8px);
-  left: 8px;
-  width: 300px;
-  background: #1c1c30;
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-lg);
+  bottom: calc(var(--taskbar-height) + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 320px;
+  background: rgba(22, 22, 40, 0.92);
+  backdrop-filter: blur(28px) saturate(1.8);
+  -webkit-backdrop-filter: blur(28px) saturate(1.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6), 0 0 0 0.5px rgba(255, 255, 255, 0.05);
   overflow: hidden;
-  backdrop-filter: blur(30px);
-  -webkit-backdrop-filter: blur(30px);
+  animation: menuSlideUp 0.2s cubic-bezier(0.2, 0, 0.2, 1);
 }
+@keyframes menuSlideUp {
+  from { opacity: 0; transform: translateX(-50%) translateY(12px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
 .start-menu-header {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 16px 20px;
-  background: var(--accent);
+  padding: 18px 20px;
+  background: linear-gradient(135deg, rgba(108, 140, 255, 0.8), rgba(108, 140, 255, 0.5));
   color: #fff;
 }
-.os-logo { font-size: 24px; }
-.os-name { font-size: 18px; font-weight: 700; }
-.os-ver { margin-left: auto; font-size: 11px; opacity: 0.7; }
+.os-name { font-size: 17px; font-weight: 700; letter-spacing: 0.02em; }
+.os-ver { margin-left: auto; font-size: 10.5px; opacity: 0.7; font-weight: 500; }
 
-.start-menu-list {
-  padding: 8px;
-}
+.start-menu-list { padding: 8px; }
 .start-menu-item {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 10px 14px;
+  padding: 9px 14px;
   border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: background var(--transition);
+  transition: all var(--transition);
+  color: var(--text-secondary);
 }
 .start-menu-item:hover {
-  background: var(--bg-hover);
+  background: var(--accent-subtle);
+  color: var(--text-primary);
 }
-.item-icon { font-size: 20px; width: 28px; text-align: center; }
-.item-label { font-size: 13px; color: var(--text-primary); }
+.start-menu-item svg { opacity: 0.65; }
+.start-menu-item:hover svg { opacity: 1; color: var(--accent); }
+.item-label { font-size: 13px; }
 
 .start-menu-footer {
-  border-top: 1px solid var(--border-color);
+  border-top: 1px solid var(--border-light);
   padding: 8px;
 }
 
@@ -122,17 +132,20 @@ function openApp(appName) {
   position: fixed;
   inset: 0;
   z-index: 1000;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 .about-dialog {
   width: 380px;
-  background: #1e1e30;
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-lg);
+  background: rgba(28, 28, 48, 0.95);
+  backdrop-filter: blur(20px) saturate(1.8);
+  -webkit-backdrop-filter: blur(20px) saturate(1.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
   overflow: hidden;
   animation: fadeIn 0.2s ease;
 }
@@ -145,32 +158,30 @@ function openApp(appName) {
   align-items: center;
   gap: 12px;
   padding: 20px 24px;
-  background: var(--accent);
+  background: linear-gradient(135deg, rgba(108, 140, 255, 0.6), rgba(80, 110, 230, 0.4));
   color: #fff;
 }
-.about-logo { font-size: 32px; }
-.about-header h2 { font-size: 22px; font-weight: 700; flex: 1; }
+.about-header h2 { font-size: 20px; font-weight: 700; flex: 1; }
 .about-close {
-  width: 28px;
-  height: 28px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.12);
   color: #fff;
-  font-size: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   border: none;
-  transition: background var(--transition);
+  transition: all var(--transition);
 }
-.about-close:hover { background: rgba(255,255,255,0.3); }
+.about-close:hover { background: rgba(255,255,255,0.25); transform: scale(1.05); }
 
 .about-body {
   padding: 20px 24px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 .about-row {
   display: flex;
@@ -178,17 +189,18 @@ function openApp(appName) {
   align-items: center;
   font-size: 13px;
   color: var(--text-primary);
-  padding: 6px 0;
-  border-bottom: 1px solid var(--border-color);
+  padding: 7px 0;
+  border-bottom: 1px solid var(--border-light);
 }
 .about-label {
   color: var(--text-muted);
   font-size: 12px;
+  font-weight: 500;
 }
 
 .about-footer {
   padding: 14px 24px;
-  border-top: 1px solid var(--border-color);
+  border-top: 1px solid var(--border-light);
   display: flex;
   justify-content: flex-end;
 }
