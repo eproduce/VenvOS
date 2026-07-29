@@ -13,14 +13,14 @@
         <span class="title-text">{{ window.title }}</span>
       </div>
       <div class="titlebar-actions">
-        <button class="title-btn" @click.stop="store.minimizeWindow(window.id)" title="最小化">
-          <AppIcon name="minimize" :size="12" />
+        <button class="traffic-btn traffic-close" @click.stop="store.closeWindow(window.id)" title="关闭">
+          <AppIcon name="x" :size="10" />
         </button>
-        <button class="title-btn" @click.stop="store.maximizeWindow(window.id)" title="最大化">
-          <AppIcon name="maximize" :size="12" />
+        <button class="traffic-btn traffic-min" @click.stop="store.minimizeWindow(window.id)" title="最小化">
+          <AppIcon name="minimize" :size="10" />
         </button>
-        <button class="title-btn close-btn" @click.stop="store.closeWindow(window.id)" title="关闭">
-          <AppIcon name="x" :size="12" />
+        <button class="traffic-btn traffic-max" @click.stop="store.maximizeWindow(window.id)" title="最大化">
+          <AppIcon name="maximize" :size="10" />
         </button>
       </div>
     </div>
@@ -263,23 +263,46 @@ onUnmounted(() => {
 }
 .titlebar-actions {
   display: flex;
-  gap: 6px;
+  gap: 8px;
 }
-.title-btn {
-  width: 13px;
-  height: 13px;
+.traffic-btn {
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.18);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 0;
   transition: all var(--transition);
+  position: relative;
 }
-.title-btn svg { opacity: 0; }
-.title-btn:hover { background: rgba(255,255,255,0.32); }
-.title-btn.close-btn { background: rgba(255,90,100,0.55); }
-.title-btn.close-btn:hover { background: var(--danger); }
+.traffic-btn svg {
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  color: rgba(0,0,0,0.6);
+}
+.traffic-btn:hover svg { opacity: 1; }
+
+.traffic-close {
+  background: #ff5f57;
+}
+.traffic-close:hover { background: #ff3b30; }
+
+.traffic-min {
+  background: #febc2e;
+}
+.traffic-min:hover { background: #f5a623; }
+
+.traffic-max {
+  background: #28c840;
+}
+.traffic-max:hover { background: #1da82b; }
+
+/* 非激活窗口按钮变灰 */
+.window:not(.is-active) .traffic-btn {
+  background: rgba(255,255,255,0.12);
+}
+.window:not(.is-active) .traffic-btn svg { opacity: 0; }
 
 /* 内容区 — 微弱的内部玻璃感 */
 .window-body {
