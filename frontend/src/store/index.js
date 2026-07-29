@@ -148,6 +148,8 @@ export const useOSStore = defineStore("os", () => {
   const startMenuOpen = ref(false);
   // 日历是否打开
   const showCalendar = ref(false);
+  // 通知面板是否打开
+  const showNotifications = ref(false);
   // 系统时间
   const currentTime = ref("");
   const currentDate = ref("");
@@ -272,6 +274,10 @@ export const useOSStore = defineStore("os", () => {
     if (showCalendar.value) startMenuOpen.value = false;
   }
 
+  function toggleNotifications() {
+    showNotifications.value = !showNotifications.value;
+  }
+
   function updateTime() {
     const now = new Date();
     currentTime.value = now.toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit" });
@@ -283,6 +289,7 @@ export const useOSStore = defineStore("os", () => {
     activeWindowId,
     startMenuOpen,
     showCalendar,
+    showNotifications,
     currentTime,
     currentDate,
     desktopIcons,
@@ -299,6 +306,7 @@ export const useOSStore = defineStore("os", () => {
     maximizeWindow,
     toggleStartMenu,
     toggleCalendar,
+    toggleNotifications,
     updateTime,
   };
 });

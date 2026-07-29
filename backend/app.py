@@ -9,6 +9,10 @@ from sanic.exceptions import NotFound
 from api.files import files_bp
 from api.disks import disks_bp
 from api.holidays import holidays_bp
+from api.auth import auth_bp
+
+from database import init_db
+from services.auth_service import AuthService
 
 # 获取前端构建目录（开发时指向 frontend 目录，生产时指向 dist）
 BASE_DIR = Path(__file__).parent.parent
@@ -21,6 +25,13 @@ app = Sanic("VenvOS")
 app.blueprint(files_bp)
 app.blueprint(disks_bp)
 app.blueprint(holidays_bp)
+app.blueprint(auth_bp)
+
+# 启动时初始化数据库
+@app.before_server_start
+async def startup(app, _):
+    await init_db()
+    await AuthService.create_admin_if_not_exists()
 
 
 # ==================== 静态文件服务 ====================

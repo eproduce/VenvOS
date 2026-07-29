@@ -20,6 +20,10 @@
       </div>
     </div>
     <div class="taskbar-right">
+      <button class="tray-icon" @click.stop="store.toggleNotifications()" title="通知">
+        <AppIcon name="info" :size="16" />
+      </button>
+      <span class="tray-user" @click.stop="onUserClick">{{ auth.user.value?.display_name || auth.user.value?.username || '用户' }}</span>
       <div class="system-tray" @click.stop="store.toggleCalendar()">
         <span class="tray-time">{{ store.currentTime }}</span>
         <span class="tray-date">{{ store.currentDate }}</span>
@@ -30,9 +34,11 @@
 
 <script setup>
 import { useOSStore } from "../store/index.js";
+import { useAuth } from "../auth.js";
 import AppIcon from "./AppIcon.vue";
 
 const store = useOSStore();
+const auth = useAuth();
 
 function onTaskbarAppClick(win) {
   if (win.minimized) {
@@ -42,6 +48,11 @@ function onTaskbarAppClick(win) {
   } else {
     store.focusWindow(win.id);
   }
+}
+
+function onUserClick() {
+  const action = confirm("确定要退出登录吗？");
+  if (action) auth.logout();
 }
 </script>
 
@@ -132,9 +143,35 @@ function onTaskbarAppClick(win) {
 .taskbar-right {
   display: flex;
   align-items: center;
+  gap: 4px;
   position: absolute;
   right: 12px;
 }
+.tray-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition);
+}
+.tray-icon:hover { background: rgba(255,255,255,0.05); color: var(--text-primary); }
+.tray-user {
+  font-size: 12px;
+  color: var(--text-muted);
+  padding: 4px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all var(--transition);
+  max-width: 80px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.tray-user:hover { background: rgba(255,255,255,0.05); color: var(--text-primary); }
 .system-tray {
   display: flex;
   flex-direction: column;
