@@ -27,7 +27,7 @@
           <span class="start-user-name">{{ userName }}</span>
           <span class="start-user-role">{{ userRole }}</span>
         </div>
-        <button class="start-user-logout" @click="doLogout" title="退出登录">
+        <button class="start-user-logout" @click="showLogoutConfirm = true" title="退出登录">
           <AppIcon name="x" :size="14" />
         </button>
       </div>
@@ -60,6 +60,25 @@
         </div>
       </div>
     </div>
+
+    <!-- 退出确认弹窗 -->
+    <div v-if="showLogoutConfirm" class="about-overlay" @click.self="showLogoutConfirm = false">
+      <div class="about-dialog" style="width: 320px;">
+        <div class="about-header">
+          <AppIcon name="x" :size="22" />
+          <h2>退出登录</h2>
+        </div>
+        <div class="about-body">
+          <p style="text-align:center;color:var(--text-secondary);font-size:14px;">
+            确定要退出当前账号吗？
+          </p>
+        </div>
+        <div class="about-footer" style="justify-content:center;gap:12px;">
+          <button class="btn btn-ghost" @click="showLogoutConfirm = false">取消</button>
+          <button class="btn btn-danger" @click="doLogout">确定退出</button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -72,6 +91,7 @@ import AppIcon from "./AppIcon.vue";
 const store = useOSStore();
 const auth = useAuth();
 const showAbout = ref(false);
+const showLogoutConfirm = ref(false);
 
 const userName = computed(() => auth.user.value?.display_name || auth.user.value?.username || "用户");
 const userInitial = computed(() => userName.value[0].toUpperCase());
@@ -83,6 +103,7 @@ function openApp(appName) {
 }
 
 function doLogout() {
+  showLogoutConfirm.value = false;
   store.startMenuOpen = false;
   auth.logout();
 }
