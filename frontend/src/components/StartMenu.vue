@@ -16,13 +16,13 @@
           class="start-menu-item"
           @click="openApp(item.app)"
         >
-          <AppIcon :name="item.icon" :size="18" />
+          <AppIcon :name="item.icon" :size="22" />
           <span class="item-label">{{ item.name }}</span>
         </div>
       </div>
       <div class="start-menu-footer">
         <div class="start-menu-item" @click="showAbout = true">
-          <AppIcon name="info" :size="18" />
+          <AppIcon name="info" :size="22" />
           <span class="item-label">关于 VenvOS</span>
         </div>
       </div>

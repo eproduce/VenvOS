@@ -13,11 +13,11 @@
     <template v-if="name === 'folder'">
       <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
     </template>
-    <!-- 磁盘 -->
+    <!-- 磁盘 / 硬盘 -->
     <template v-else-if="name === 'disk'">
-      <circle cx="12" cy="12" r="10" />
-      <path d="M12 8v8" />
-      <path d="M8 12h8" />
+      <rect x="2" y="6" width="20" height="12" rx="2" ry="2" />
+      <circle cx="12" cy="12" r="3" />
+      <circle cx="12" cy="12" r="1" fill="currentColor" stroke="none" />
     </template>
     <!-- 显示器 -->
     <template v-else-if="name === 'monitor'">
