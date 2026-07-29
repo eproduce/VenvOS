@@ -20,6 +20,17 @@
           <span class="item-label">{{ item.name }}</span>
         </div>
       </div>
+      <!-- 用户区域 -->
+      <div class="start-menu-user">
+        <div class="start-user-avatar">{{ userInitial }}</div>
+        <div class="start-user-info">
+          <span class="start-user-name">{{ userName }}</span>
+          <span class="start-user-role">{{ userRole }}</span>
+        </div>
+        <button class="start-user-logout" @click="doLogout" title="退出登录">
+          <AppIcon name="x" :size="14" />
+        </button>
+      </div>
       <div class="start-menu-footer">
         <div class="start-menu-item" @click="showAbout = true">
           <AppIcon name="info" :size="22" />
@@ -53,16 +64,27 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useOSStore } from "../store/index.js";
+import { useAuth } from "../auth.js";
 import AppIcon from "./AppIcon.vue";
 
 const store = useOSStore();
+const auth = useAuth();
 const showAbout = ref(false);
+
+const userName = computed(() => auth.user.value?.display_name || auth.user.value?.username || "用户");
+const userInitial = computed(() => userName.value[0].toUpperCase());
+const userRole = computed(() => auth.user.value?.role === "admin" ? "管理员" : "用户");
 
 function openApp(appName) {
   store.startMenuOpen = false;
   store.openApp(appName);
+}
+
+function doLogout() {
+  store.startMenuOpen = false;
+  auth.logout();
 }
 </script>
 
@@ -124,6 +146,62 @@ function openApp(appName) {
 .start-menu-footer {
   border-top: 1px solid var(--border-light);
   padding: 8px;
+}
+
+/* 用户区域 */
+.start-menu-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--border-light);
+}
+.start-user-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), #1d4ed8);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.start-user-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.start-user-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.start-user-role {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+.start-user-logout {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition);
+  flex-shrink: 0;
+}
+.start-user-logout:hover {
+  background: rgba(255, 95, 107, 0.15);
+  color: var(--danger);
 }
 
 /* 关于弹窗 */
