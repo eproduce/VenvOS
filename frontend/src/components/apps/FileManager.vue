@@ -17,6 +17,14 @@
 
     <!-- 主区域 -->
     <div class="fm-main">
+      <!-- Tab 导航 -->
+      <div class="fm-tabs">
+        <button :class="{ active: tab === 'files' }" @click="tab = 'files'">📂 文件</button>
+        <button :class="{ active: tab === 'shares' }" @click="tab = 'shares'; loadShares()">🪟 共享</button>
+      </div>
+
+      <!-- 文件 Tab -->
+      <template v-if="tab === 'files'">
       <!-- 工具栏 -->
       <div class="fm-toolbar">
         <div class="toolbar-nav">
@@ -151,7 +159,60 @@
         </div>
       </template>
     </div>
+    </template>
+
+    <!-- 共享 Tab -->
+    <template v-if="tab === 'shares'">
+    <div class="shares-section">
+      <div class="share-toolbar">
+        <button class="btn btn-primary btn-sm" @click="showShareModal = true">＋ 新建共享</button>
+      </div>
+      <div v-if="shares.length === 0" class="empty-state">暂无文件共享</div>
+      <div v-for="s in shares" :key="s.name" class="share-card" :class="{ disabled: !s.enabled }">
+        <div class="share-main">
+          <span class="share-icon">{{ {SMB:'🪟',NFS:'🐧',WebDAV:'🌐',FTP:'📁'}[s.protocol] || '📂' }}</span>
+          <div class="share-info">
+            <span class="share-name">{{ s.name }}</span>
+            <div class="share-meta">
+              <span class="share-tag">{{ s.protocol }}</span>
+              <span class="share-tag" :class="s.read_only ? 'ro' : 'rw'">{{ s.read_only ? '只读' : '读写' }}</span>
+              <span :class="s.exists ? '' : 'missing'">{{ s.path }}</span>
+            </div>
+          </div>
+          <div class="share-actions">
+            <button class="btn btn-ghost btn-sm" @click="toggleShare(s)">{{ s.enabled ? '停用' : '启用' }}</button>
+            <button class="btn btn-ghost btn-sm" @click="deleteShare(s)" style="color:var(--danger)">删除</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 新建共享弹窗 -->
+    <div v-if="showShareModal" class="modal-overlay" @click.self="showShareModal = false">
+      <div class="modal-dialog">
+        <h3>新建文件共享</h3>
+        <label class="field-label">共享名称</label>
+        <input v-model="shareForm.name" placeholder="如：家庭照片" />
+        <label class="field-label">文件夹路径</label>
+        <input v-model="shareForm.path" placeholder="如：/Users/xxx/Pictures" />
+        <label class="field-label">共享协议</label>
+        <select v-model="shareForm.protocol">
+          <option v-for="p in shareProtocols" :key="p" :value="p">{{ p }}</option>
+        </select>
+        <label class="field-label">权限</label>
+        <select v-model="shareForm.readOnly">
+          <option :value="false">读写</option>
+          <option :value="true">只读</option>
+        </select>
+        <div class="modal-actions">
+          <button class="btn btn-ghost" @click="showShareModal = false">取消</button>
+          <button class="btn btn-primary" @click="createShare">创建</button>
+        </div>
+      </div>
+    </div>
+    </template>
   </div>
+</div>
 </template>
 
 <script setup>
@@ -161,7 +222,9 @@ import AppIcon from "../AppIcon.vue";
 
 const props = defineProps({ windowId: Number, params: Object });
 
-// 快速访问
+const tab = ref("files");
+
+// ==================== 文件管理 ====================
 const quickAccess = [
   { label: "主目录", icon: "folder", path: "/Users" },
   { label: "桌面", icon: "monitor", path: "/Users/" + (props.params?.username || "") + "/Desktop" },
@@ -379,6 +442,32 @@ function getFileIcon(ext) {
 
 // 初始化
 loadDirectory(currentPath.value);
+
+// ==================== 文件共享 ====================
+const shares = ref([]);
+const showShareModal = ref(false);
+const shareProtocols = ["SMB", "NFS", "WebDAV", "FTP"];
+const shareForm = ref({ name: "", path: "", protocol: "SMB", readOnly: false });
+
+async function loadShares() {
+  try { const res = await api.get("/api/share"); shares.value = res.data.data || []; } catch {}
+}
+async function createShare() {
+  if (!shareForm.value.name || !shareForm.value.path) return;
+  try {
+    await api.post("/api/share", { name: shareForm.value.name, path: shareForm.value.path, protocol: shareForm.value.protocol, read_only: shareForm.value.readOnly });
+    showShareModal.value = false;
+    shareForm.value = { name: "", path: "", protocol: "SMB", readOnly: false };
+    loadShares();
+  } catch (e) { alert("创建失败: " + (e.response?.data?.error || e.message)); }
+}
+async function toggleShare(s) {
+  try { await api.post(`/api/share/${s.name}/toggle`); loadShares(); } catch {}
+}
+async function deleteShare(s) {
+  if (!confirm(`确定删除共享 "${s.name}" 吗？`)) return;
+  try { await api.delete(`/api/share/${s.name}`); loadShares(); } catch {}
+}
 </script>
 
 <style scoped>
@@ -429,6 +518,18 @@ loadDirectory(currentPath.value);
   min-width: 0;
   overflow: hidden;
 }
+
+/* Tabs */
+.fm-tabs {
+  display: flex; border-bottom: 1px solid var(--border-color); flex-shrink: 0;
+}
+.fm-tabs button {
+  padding: 8px 20px; font-size: 12.5px; color: var(--text-muted);
+  background: none; border-bottom: 2px solid transparent;
+  transition: all var(--transition);
+}
+.fm-tabs button:hover { color: var(--text-primary); }
+.fm-tabs button.active { color: var(--accent); border-bottom-color: var(--accent); }
 
 /* 工具栏 */
 .fm-toolbar {
@@ -529,4 +630,39 @@ loadDirectory(currentPath.value);
   font-size: 12px;
   width: 200px;
 }
+
+/* 共享 */
+.shares-section { padding: 16px; overflow-y: auto; flex: 1; }
+.share-toolbar { margin-bottom: 14px; }
+.empty-state { text-align: center; padding: 40px; color: var(--text-muted); font-size: 13px; }
+.share-card {
+  background: var(--bg-sidebar); border: 1px solid var(--border-color);
+  border-radius: var(--radius); padding: 12px 16px; margin-bottom: 8px;
+}
+.share-card.disabled { opacity: 0.45; }
+.share-main { display: flex; align-items: center; gap: 12px; }
+.share-icon { font-size: 28px; flex-shrink: 0; }
+.share-info { flex: 1; min-width: 0; }
+.share-name { font-size: 13px; font-weight: 600; display: block; }
+.share-meta { display: flex; gap: 6px; align-items: center; margin-top: 4px; font-size: 11px; color: var(--text-muted); }
+.share-tag { padding: 1px 8px; border-radius: 100px; font-weight: 600; background: rgba(59,130,246,0.1); color: var(--accent); }
+.share-tag.ro { background: rgba(255,180,60,0.1); color: var(--warning); }
+.share-tag.rw { background: rgba(62,207,142,0.1); color: var(--success); }
+.share-meta .missing { color: var(--danger); }
+.share-actions { display: flex; gap: 4px; flex-shrink: 0; }
+
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 5000; background: rgba(0,0,0,0.5);
+  display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px);
+}
+.modal-dialog {
+  width: 360px; background: rgba(28,28,48,0.95);
+  backdrop-filter: blur(20px) saturate(1.8);
+  border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-xl);
+  padding: 24px; box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+}
+.modal-dialog h3 { font-size: 16px; margin-bottom: 16px; }
+.field-label { display: block; font-size: 12px; color: var(--text-muted); margin: 8px 0 4px; }
+.modal-dialog input, .modal-dialog select { width: 100%; }
+.modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
 </style>

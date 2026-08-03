@@ -53,10 +53,6 @@
         v-else-if="window.app === 'FileShareManager'"
         :window-id="window.id"
       />
-      <FileShareManager
-        v-else-if="window.app === 'FileShareManager'"
-        :window-id="window.id"
-      />
       <div v-else class="app-placeholder">
         <AppIcon :name="window.icon" :size="48" />
         <h3>{{ window.title }}</h3>
@@ -85,7 +81,6 @@ import SystemInfo from "./apps/SystemInfo.vue";
 import Notepad from "./apps/Notepad.vue";
 import WallpaperSettings from "./apps/WallpaperSettings.vue";
 import StorageManager from "./apps/StorageManager.vue";
-import FileShareManager from "./apps/FileShareManager.vue";
 import AppIcon from "./AppIcon.vue";
 
 const props = defineProps({

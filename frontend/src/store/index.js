@@ -175,7 +175,6 @@ export const useOSStore = defineStore("os", () => {
     { id: "notepad", name: "记事本", icon: "file", app: "Notepad" },
     { id: "wallpaper", name: "壁纸设置", icon: "settings", app: "WallpaperSettings" },
     { id: "storage", name: "存储管理", icon: "disk", app: "StorageManager" },
-    { id: "shares", name: "文件共享", icon: "folder", app: "FileShareManager" },
   ]);
 
   // 应用注册表
@@ -185,7 +184,6 @@ export const useOSStore = defineStore("os", () => {
     Notepad: { title: "记事本", icon: "file", width: 600, height: 450 },
     WallpaperSettings: { title: "壁纸设置", icon: "settings", width: 640, height: 480 },
     StorageManager: { title: "存储管理", icon: "disk", width: 800, height: 550 },
-    FileShareManager: { title: "文件共享", icon: "folder", width: 700, height: 500 },
   };
 
   function openApp(appName, params = {}) {
