@@ -4,63 +4,57 @@ import { ref, computed } from "vue";
 let windowIdCounter = 1000;
 
 // ==================== 壁纸定义 ====================
-// SVG 手绘 macOS 风格动态景观壁纸
+// 混合：Unsplash 真实照片 + Canvas 程序化生成
 export const wallpapers = [
   {
     id: "dynamic",
     name: "动态壁纸",
     type: "dynamic",
-    thumbnail: "linear-gradient(90deg, #1e2440 0%, #3498c8 33%, #e89860 66%, #07071a 100%)",
+    thumbnail: "linear-gradient(135deg, #1e2440 0%, #3498c8 50%, #e89860 100%)",
   },
   {
     id: "mountain",
-    name: "macOS 山脉",
-    type: "static",
-    thumbnail: "linear-gradient(180deg, #1a3a5c 0%, #e8a87c 70%, #2d5a3f 100%)",
-    svg: "mountain",
+    name: "🏔️ 山峦叠嶂",
+    type: "canvas",
+    thumbnail: "linear-gradient(135deg, #1a3458 0%, #3a6a9c 50%, #d4a070 100%)",
   },
   {
     id: "desert",
-    name: "macOS 沙漠",
-    type: "static",
-    thumbnail: "linear-gradient(180deg, #5c3a6e 0%, #e89860 50%, #c4a060 100%)",
-    svg: "desert",
+    name: "🏜️ 沙漠黄昏",
+    type: "canvas",
+    thumbnail: "linear-gradient(135deg, #3c1a4e 0%, #c4685e 50%, #d4b878 100%)",
   },
   {
     id: "aurora",
-    name: "极光之夜",
-    type: "static",
-    thumbnail: "linear-gradient(180deg, #0a0a2e 0%, #1a3a5e 50%, #0d2a1a 100%)",
-    svg: "aurora",
+    name: "🌌 极光之夜",
+    type: "canvas",
+    thumbnail: "linear-gradient(135deg, #050520 0%, #0d1840 50%, #081a20 100%)",
   },
   {
-    id: "lake",
-    name: "静谧湖泊",
-    type: "static",
-    thumbnail: "linear-gradient(180deg, #2a4a6e 0%, #8fc4d8 50%, #2a4a6e 100%)",
-    svg: "lake",
+    id: "lake-canvas",
+    name: "🏞️ 静谧湖泊",
+    type: "canvas",
+    thumbnail: "linear-gradient(135deg, #1a3a5c 0%, #8bb8cc 50%, #1a3048 100%)",
   },
   {
-    id: "spring",
-    name: "春日花海",
-    type: "static",
-    thumbnail: "linear-gradient(180deg, #7ab8d4 0%, #c4e0a0 50%, #e8b4c8 100%)",
-    svg: "spring",
+    id: "spring-canvas",
+    name: "🌸 春日花海",
+    type: "canvas",
+    thumbnail: "linear-gradient(135deg, #5a9ac0 0%, #c8e8c0 50%, #d8c8d8 100%)",
   },
   {
     id: "morning",
-    name: "Tahoe 晨光",
-    type: "static",
-    thumbnail: "linear-gradient(180deg, #1a1a3e 0%, #3d5a80 30%, #98c1d9 60%, #e0cfa5 100%)",
-    svg: "morning",
+    name: "🌅 Tahoe 晨光",
+    type: "canvas",
+    thumbnail: "linear-gradient(135deg, #1e2440 0%, #8db4c8 50%, #ebd9b0 100%)",
   },
   {
-    id: "night",
-    name: "Tahoe 夜色",
-    type: "static",
-    thumbnail: "linear-gradient(180deg, #0a0a1a 0%, #1a1040 50%, #0d1b2a 100%)",
-    svg: "night",
+    id: "night-canvas",
+    name: "🌙 Tahoe 夜色",
+    type: "canvas",
+    thumbnail: "linear-gradient(135deg, #07071a 0%, #11163a 50%, #080e1e 100%)",
   },
+  // 以下为 Unsplash 真实照片，由后端 API 动态发现
 ];
 
 // 动态壁纸：根据时间模拟 macOS 风格白天→日落→夜晚 + 太阳轨迹
@@ -139,17 +133,25 @@ export const useOSStore = defineStore("os", () => {
   const currentDate = ref("");
 
   // ==================== 壁纸系统 ====================
-  const currentWallpaperId = ref("tahoe-morning");
+  const currentWallpaperId = ref("dynamic");
   const dynamicBackground = ref("");
+  const _photoWallpaper = ref(null);
 
-  const currentWallpaper = computed(() =>
-    wallpapers.find((w) => w.id === currentWallpaperId.value) || wallpapers[0]
-  );
+  const currentWallpaper = computed(() => {
+    if (_photoWallpaper.value) return _photoWallpaper.value;
+    return wallpapers.find((w) => w.id === currentWallpaperId.value) || wallpapers[0];
+  });
 
   function setWallpaper(id) {
     currentWallpaperId.value = id;
-    // 持久化到 localStorage
+    _photoWallpaper.value = null;
     try { localStorage.setItem("venvos-wallpaper", id); } catch {}
+  }
+
+  function setPhotoWallpaper(photo) {
+    currentWallpaperId.value = photo.id;
+    _photoWallpaper.value = photo;
+    try { localStorage.setItem("venvos-wallpaper", photo.id); } catch {}
   }
 
   function loadWallpaper() {
@@ -283,6 +285,7 @@ export const useOSStore = defineStore("os", () => {
     currentWallpaper,
     dynamicBackground,
     setWallpaper,
+    setPhotoWallpaper,
     loadWallpaper,
     updateDynamicWallpaper,
     openApp,

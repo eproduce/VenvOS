@@ -7,10 +7,18 @@
   >
     <!-- 壁纸层 -->
     <div class="desktop-bg">
-      <WallpaperCanvas
-        v-if="store.currentWallpaper?.type === 'static' && store.currentWallpaper?.svg"
-        :name="store.currentWallpaper.svg"
+      <!-- 真实照片壁纸 -->
+      <img
+        v-if="store.currentWallpaper?.type === 'photo'"
+        class="bg-photo"
+        :src="`/api/wallpaper/image/${store.currentWallpaper.file}`"
       />
+      <!-- Canvas 程序化壁纸 -->
+      <WallpaperCanvas
+        v-else-if="store.currentWallpaper?.type === 'canvas' || !store.currentWallpaper?.type"
+        :name="store.currentWallpaper?.id || 'dynamic'"
+      />
+      <!-- 动态壁纸 -->
       <WallpaperCanvas
         v-else
         name="dynamic"
@@ -121,6 +129,12 @@ onUnmounted(() => document.removeEventListener("mousedown", onDocumentMouseDown,
     radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.04) 0%, transparent 60%),
     radial-gradient(ellipse at 80% 100%, rgba(255,255,255,0.03) 0%, transparent 50%);
   pointer-events: none;
+}
+.bg-photo {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .desktop-icons {

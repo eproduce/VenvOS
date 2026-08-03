@@ -3,17 +3,17 @@
     <div class="ws-intro">选择一张壁纸来个性化你的桌面</div>
     <div class="ws-grid">
       <div
-        v-for="wp in wallpapers"
+        v-for="wp in allWallpapers"
         :key="wp.id"
         class="ws-card"
-        :class="{ active: store.currentWallpaperId === wp.id }"
+        :class="{ active: store.currentWallpaper?.id === wp.id }"
         @click="selectWallpaper(wp.id)"
       >
-        <div class="ws-preview" :style="{ background: wp.thumbnail }">
+        <div class="ws-preview" :style="wp.type === 'photo' ? { backgroundImage: wp.thumbnail, backgroundSize: 'cover', backgroundPosition: 'center' } : { background: wp.thumbnail }">
           <div v-if="wp.type === 'dynamic'" class="ws-badge">
             <AppIcon name="refresh" :size="11" /> 动态
           </div>
-          <div v-if="store.currentWallpaperId === wp.id" class="ws-check">
+          <div v-if="store.currentWallpaper?.id === wp.id" class="ws-check">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
           </div>
         </div>
@@ -24,16 +24,42 @@
 </template>
 
 <script setup>
+import { ref, computed, onMounted } from "vue";
 import { wallpapers } from "../../store/index.js";
 import { useOSStore } from "../../store/index.js";
+import api from "../../api.js";
 import AppIcon from "../AppIcon.vue";
 
 defineProps({ windowId: Number });
 const store = useOSStore();
+const photoWallpapers = ref([]);
+
+const allWallpapers = computed(() => [...wallpapers, ...photoWallpapers.value]);
+
+async function loadPhotos() {
+  try {
+    const res = await api.get("/api/wallpaper/list");
+    const photos = (res.data.data || []).map(p => ({
+      id: "photo-" + p.name,
+      name: "📷 " + p.name.replace(/[-_]/g, " "),
+      type: "photo",
+      file: p.file,
+      thumbnail: `url(/api/wallpaper/thumb/${p.file})`,
+    }));
+    photoWallpapers.value = photos;
+  } catch {}
+}
 
 function selectWallpaper(id) {
-  store.setWallpaper(id);
+  const photoWp = photoWallpapers.value.find(p => p.id === id);
+  if (photoWp) {
+    store.setPhotoWallpaper(photoWp);
+  } else {
+    store.setWallpaper(id);
+  }
 }
+
+onMounted(loadPhotos);
 </script>
 
 <style scoped>
