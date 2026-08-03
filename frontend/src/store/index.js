@@ -113,9 +113,6 @@ export const wallpapers = [
     `,
   },
 ];
-    thumbnail: "linear-gradient(90deg, #1e2440 0%, #3498c8 33%, #e89860 66%, #07071a 100%)",
-  },
-];
 
 // 动态壁纸：根据时间模拟 macOS 风格白天→日落→夜晚 + 太阳轨迹
 export function getDynamicWallpaper(hour) {
