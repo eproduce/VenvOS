@@ -4,8 +4,79 @@ import { ref, computed } from "vue";
 let windowIdCounter = 1000;
 
 // ==================== 壁纸定义 ====================
-// 静态壁纸：用 CSS 渐变模拟 macOS Tahoe 风格景观
+// CSS 渐变模拟 macOS 风格动态景观
 export const wallpapers = [
+  {
+    id: "dynamic",
+    name: "动态壁纸",
+    type: "dynamic",
+    thumbnail: "linear-gradient(90deg, #1e2440 0%, #3498c8 33%, #e89860 66%, #07071a 100%)",
+  },
+  {
+    id: "macos-mountain",
+    name: "macOS 山脉",
+    type: "static",
+    thumbnail: "linear-gradient(180deg, #1a3a5c 0%, #e8a87c 70%, #2d5a3f 100%)",
+    background: `
+      radial-gradient(circle 180px at 65% 52%, rgba(255,220,160,0.7) 0%, rgba(255,180,100,0.2) 40%, transparent 60%),
+      radial-gradient(ellipse 100% 30% at 50% 78%, #1a3a28 0%, #0d1f14 100%),
+      radial-gradient(ellipse 120% 35% at 50% 70%, #2d5a3f 0%, transparent 100%),
+      linear-gradient(175deg, #1a3458 0%, #2d5a8c 25%, #6ba3c7 45%, #8fc4d8 55%, #d4a878 68%, #e8c8a0 85%, #3a6040 100%)
+    `,
+  },
+  {
+    id: "macos-desert",
+    name: "macOS 沙漠",
+    type: "static",
+    thumbnail: "linear-gradient(180deg, #5c3a6e 0%, #e89860 50%, #c4a060 100%)",
+    background: `
+      radial-gradient(circle 120px at 70% 35%, rgba(255,240,200,0.5) 0%, rgba(255,200,100,0.1) 50%, transparent 70%),
+      radial-gradient(ellipse 100% 35% at 50% 82%, #8b6b4a 0%, #3d2a1a 100%),
+      radial-gradient(ellipse 100% 20% at 50% 75%, #c49560 0%, transparent 100%),
+      linear-gradient(180deg, #3c1a4e 0%, #6a2a5e 18%, #a04a6a 35%, #d4786a 52%, #e8a060 68%, #d4b878 82%, #9b7a50 100%)
+    `,
+  },
+  {
+    id: "macos-aurora",
+    name: "极光之夜",
+    type: "static",
+    thumbnail: "linear-gradient(180deg, #0a0a2e 0%, #1a3a5e 50%, #0d2a1a 100%)",
+    background: `
+      radial-gradient(ellipse 1px 1px at 15% 10%, #fff 0%, transparent 100%),
+      radial-gradient(ellipse 1px 1px at 35% 8%, #fff 0%, transparent 100%),
+      radial-gradient(ellipse 1px 1px at 60% 12%, #fff 0%, transparent 100%),
+      radial-gradient(ellipse 1px 1px at 78% 6%, #fff 0%, transparent 100%),
+      radial-gradient(ellipse 80% 6% at 50% 30%, rgba(100,220,180,0.15) 0%, transparent 70%),
+      radial-gradient(ellipse 70% 4% at 40% 28%, rgba(120,180,240,0.12) 0%, transparent 70%),
+      radial-gradient(ellipse 60% 10% at 55% 32%, rgba(140,200,160,0.1) 0%, transparent 60%),
+      radial-gradient(ellipse 100% 35% at 50% 90%, #0a1a10 0%, transparent 70%),
+      linear-gradient(180deg, #050520 0%, #0a1030 20%, #0d1840 40%, #0a1a30 65%, #081a20 85%, #0a1a15 100%)
+    `,
+  },
+  {
+    id: "macos-lake",
+    name: "静谧湖泊",
+    type: "static",
+    thumbnail: "linear-gradient(180deg, #2a4a6e 0%, #8fc4d8 50%, #2a4a6e 100%)",
+    background: `
+      radial-gradient(circle 160px at 50% 20%, rgba(255,255,240,0.3) 0%, transparent 55%),
+      radial-gradient(ellipse 100% 40% at 50% 45%, rgba(50,100,160,0.25) 0%, rgba(30,60,100,0.15) 50%, transparent 80%),
+      radial-gradient(ellipse 100% 30% at 50% 88%, #1a3040 0%, #0a1820 100%),
+      linear-gradient(180deg, #1a3a5c 0%, #2d5680 20%, #4a78a0 40%, #8bb8cc 52%, #3a6888 58%, #284868 75%, #1a3048 100%)
+    `,
+  },
+  {
+    id: "macos-spring",
+    name: "春日花海",
+    type: "static",
+    thumbnail: "linear-gradient(180deg, #7ab8d4 0%, #c4e0a0 50%, #e8b4c8 100%)",
+    background: `
+      radial-gradient(ellipse 60% 30% at 70% 60%, rgba(240,160,200,0.2) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 25% at 30% 65%, rgba(200,240,160,0.2) 0%, transparent 60%),
+      radial-gradient(ellipse 100% 25% at 50% 85%, #7a9a50 0%, #3a5a20 100%),
+      linear-gradient(180deg, #5a9ac0 0%, #8bc4dc 30%, #a4d4e0 50%, #c8e8c0 68%, #e8c8d0 82%, #c4a0b0 100%)
+    `,
+  },
   {
     id: "tahoe-morning",
     name: "Tahoe 晨光",
@@ -15,17 +86,6 @@ export const wallpapers = [
       radial-gradient(ellipse 80% 50% at 50% 35%, rgba(255,198,120,0.25) 0%, transparent 60%),
       radial-gradient(ellipse 60% 40% at 20% 20%, rgba(130,180,240,0.2) 0%, transparent 50%),
       linear-gradient(180deg, #1e2440 0%, #2d3e62 20%, #4a6d8c 45%, #8db4c8 65%, #d4c9a8 85%, #ebd9b0 100%)
-    `,
-  },
-  {
-    id: "tahoe-noon",
-    name: "Tahoe 正午",
-    type: "static",
-    thumbnail: "linear-gradient(180deg, #1a5276 0%, #2980b9 40%, #85c1e9 70%, #d4e6f1 100%)",
-    background: `
-      radial-gradient(ellipse 70% 50% at 50% 30%, rgba(255,255,255,0.3) 0%, transparent 55%),
-      radial-gradient(ellipse 50% 30% at 75% 15%, rgba(255,240,200,0.25) 0%, transparent 50%),
-      linear-gradient(180deg, #144a72 0%, #1d6fa5 25%, #3498c8 50%, #6db9d8 70%, #9ad0e6 85%, #c5e3f0 100%)
     `,
   },
   {
@@ -52,78 +112,56 @@ export const wallpapers = [
       linear-gradient(180deg, #07071a 0%, #0d0f28 30%, #11163a 55%, #0d1428 80%, #080e1e 100%)
     `,
   },
-  {
-    id: "tahoe-forest",
-    name: "Tahoe 森林",
-    type: "static",
-    thumbnail: "linear-gradient(180deg, #0b2e1f 0%, #1a6b3c 40%, #4caf7d 70%, #a5d6a7 100%)",
-    background: `
-      radial-gradient(ellipse 70% 45% at 50% 35%, rgba(200,255,200,0.15) 0%, transparent 55%),
-      radial-gradient(ellipse 50% 30% at 40% 20%, rgba(255,255,220,0.12) 0%, transparent 50%),
-      linear-gradient(180deg, #0a2418 0%, #113826 20%, #1a5c34 45%, #2d8050 65%, #4ea870 82%, #82c99a 100%)
-    `,
-  },
-  {
-    id: "tahoe-ocean",
-    name: "Tahoe 海岸",
-    type: "static",
-    thumbnail: "linear-gradient(180deg, #053b5e 0%, #0a6e9e 40%, #3ba5c8 70%, #9cddec 100%)",
-    background: `
-      radial-gradient(ellipse 80% 40% at 50% 30%, rgba(255,255,255,0.25) 0%, transparent 50%),
-      radial-gradient(ellipse 50% 35% at 25% 60%, rgba(100,200,220,0.2) 0%, transparent 50%),
-      linear-gradient(180deg, #043354 0%, #064e72 20%, #0a6c96 45%, #1d8ab4 65%, #4dabc8 82%, #84cde0 100%)
-    `,
-  },
-  {
-    id: "dynamic",
-    name: "动态壁纸",
-    type: "dynamic",
+];
     thumbnail: "linear-gradient(90deg, #1e2440 0%, #3498c8 33%, #e89860 66%, #07071a 100%)",
   },
 ];
 
-// 动态壁纸：根据一天中的时间渐变
+// 动态壁纸：根据时间模拟 macOS 风格白天→日落→夜晚 + 太阳轨迹
 export function getDynamicWallpaper(hour) {
-  // 日出 6:00、正午 12:00、日落 18:00、夜晚 22:00
+  // 太阳位置计算：6点日出在地平线，12点在最高点，18点日落在地平线
+  const sunProgress = Math.max(0, Math.min(1, (hour - 6) / 12)); // 0=日出, 0.5=正午, 1=日落
+  const sunX = 20 + sunProgress * 60; // 从左到右：20% → 80%
+  const sunY = 75 - Math.sin(sunProgress * Math.PI) * 55; // 抛物线：75% → 20% → 75%
+  const sunOpacity = sunProgress < 0.05 || sunProgress > 0.95 ? 0.1 : Math.sin(sunProgress * Math.PI) * 0.5;
+
+  // 天空颜色过渡
   const transitions = [
-    { h: 0,  sky1: "#050510", sky2: "#07071a", g1: "rgba(20,20,50,0.3)",  g2: "rgba(10,30,80,0.2)" },
-    { h: 5,  sky1: "#0a0a28", sky2: "#101835", g1: "rgba(40,40,80,0.3)",  g2: "rgba(20,30,70,0.2)" },
-    { h: 6,  sky1: "#1a2040", sky2: "#2d3e62", g1: "rgba(255,160,80,0.2)", g2: "rgba(130,170,230,0.15)" },
-    { h: 8,  sky1: "#244a72", sky2: "#4a7d9c", g1: "rgba(255,200,120,0.22)", g2: "rgba(160,200,240,0.12)" },
-    { h: 10, sky1: "#1d5fa5", sky2: "#5da8c8", g1: "rgba(255,255,220,0.25)", g2: "rgba(180,210,245,0.1)" },
-    { h: 12, sky1: "#144a72", sky2: "#3498c8", g1: "rgba(255,255,240,0.28)", g2: "rgba(200,220,240,0.1)" },
-    { h: 14, sky1: "#1d6fa5", sky2: "#5da8c8", g1: "rgba(255,255,200,0.25)", g2: "rgba(180,210,240,0.12)" },
-    { h: 16, sky1: "#2d5a80", sky2: "#6d98b8", g1: "rgba(255,200,140,0.22)", g2: "rgba(160,190,220,0.15)" },
-    { h: 17, sky1: "#3d4060", sky2: "#7b5568", g1: "rgba(240,150,80,0.28)", g2: "rgba(160,90,130,0.18)" },
-    { h: 18, sky1: "#2c1654", sky2: "#7b3f61", g1: "rgba(240,130,60,0.3)",  g2: "rgba(140,80,120,0.2)" },
-    { h: 19, sky1: "#1a1038", sky2: "#5a3058", g1: "rgba(220,100,50,0.25)", g2: "rgba(80,60,100,0.18)" },
-    { h: 20, sky1: "#101028", sky2: "#2a1a3e", g1: "rgba(150,80,60,0.15)",  g2: "rgba(40,30,70,0.15)" },
-    { h: 22, sky1: "#080818", sky2: "#151030", g1: "rgba(30,30,60,0.25)",   g2: "rgba(15,20,60,0.2)" },
+    { h: 0,  top: "#050510", mid: "#080820", bot: "#0a0a18", sun: "rgba(255,255,240,0.05)" },
+    { h: 5,  top: "#0a0a28", mid: "#121838", bot: "#101028", sun: "rgba(255,200,100,0.1)" },
+    { h: 6,  top: "#1a2848", mid: "#304868", bot: "#253050", sun: "rgba(255,180,80,0.35)" },
+    { h: 8,  top: "#2a5080", mid: "#5a88b8", bot: "#406898", sun: "rgba(255,240,180,0.45)" },
+    { h: 10, top: "#2868a4", mid: "#68a4d0", bot: "#4080b0", sun: "rgba(255,255,220,0.5)" },
+    { h: 12, top: "#2060a0", mid: "#60a0d0", bot: "#3880b8", sun: "rgba(255,255,240,0.55)" },
+    { h: 14, top: "#2a68a4", mid: "#68a4d0", bot: "#4088b8", sun: "rgba(255,250,200,0.45)" },
+    { h: 16, top: "#305080", mid: "#6088b0", bot: "#305878", sun: "rgba(255,200,120,0.35)" },
+    { h: 17, top: "#3a3858", mid: "#785868", bot: "#483848", sun: "rgba(240,140,60,0.4)" },
+    { h: 18, top: "#2a1848", mid: "#6a3860", bot: "#402048", sun: "rgba(240,100,40,0.3)" },
+    { h: 19, top: "#180e30", mid: "#3a2040", bot: "#200e28", sun: "rgba(200,80,30,0.15)" },
+    { h: 20, top: "#0c0a20", mid: "#1a1030", bot: "#0e0a20", sun: "rgba(0,0,0,0)" },
+    { h: 22, top: "#060610", mid: "#0c0a20", bot: "#060610", sun: "rgba(0,0,0,0)" },
   ];
 
   const sorted = [...transitions].sort((a, b) => a.h - b.h);
   let lower = sorted[0], upper = sorted[sorted.length - 1];
   for (let i = 0; i < sorted.length - 1; i++) {
-    if (hour >= sorted[i].h && hour < sorted[i + 1].h) {
-      lower = sorted[i];
-      upper = sorted[i + 1];
-      break;
-    }
+    if (hour >= sorted[i].h && hour < sorted[i + 1].h) { lower = sorted[i]; upper = sorted[i + 1]; break; }
   }
-
   const range = (upper.h - lower.h + 24) % 24 || 1;
-  const elapsed = ((hour - lower.h + 24) % 24);
-  const t = Math.min(1, elapsed / range);
+  const t = Math.min(1, ((hour - lower.h + 24) % 24) / range);
 
   function lerp(a, b) { return a + (b - a) * t; }
 
-  const sky1 = lower.sky1; // just use the lower band's colors
-  const sky2 = upper.sky2;
+  // 太阳光晕
+  const sunGlow = sunOpacity > 0.05
+    ? `radial-gradient(circle 120px at ${sunX}% ${sunY}%, rgba(255,240,200,${sunOpacity}) 0%, rgba(255,200,100,${sunOpacity * 0.4}) 40%, transparent 65%),`
+    : "";
 
   return `
-    radial-gradient(ellipse 80% 50% at 50% 40%, ${lower.g1} 0%, transparent 55%),
-    radial-gradient(ellipse 60% 35% at 30% 25%, ${lower.g2} 0%, transparent 50%),
-    linear-gradient(180deg, ${lower.sky1} 0%, ${interpolateColor(lower.sky1, upper.sky1, t)} 30%, ${interpolateColor(lower.sky2, upper.sky2, t)} 65%, ${upper.sky2} 100%)
+    ${sunGlow}
+    radial-gradient(ellipse 100% 35% at 50% 90%, rgba(20,30,20,0.6) 0%, rgba(15,20,15,0.3) 50%, transparent 75%),
+    radial-gradient(ellipse 90% 25% at 50% 85%, rgba(30,50,30,0.5) 0%, transparent 100%),
+    linear-gradient(180deg, ${lower.top} 0%, ${interpolateColor(lower.top, upper.top, t)} 30%, ${interpolateColor(lower.mid, upper.mid, t)} 60%, ${interpolateColor(lower.bot, upper.bot, t)} 100%)
   `;
 }
 
