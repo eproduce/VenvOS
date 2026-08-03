@@ -126,7 +126,6 @@
           <span class="col-type">{{ item.type === 'directory' ? '文件夹' : (item.extension || '文件') }}</span>
         </div>
       </div>
-    </div>
 
     <!-- 右键菜单 -->
     <div
