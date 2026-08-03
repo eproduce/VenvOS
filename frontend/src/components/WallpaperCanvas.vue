@@ -21,60 +21,88 @@ const SCENES = {
   night:   { sky: ["#07071a", "#0d1030", "#11163a", "#080e1e"], ground: ["#0a0e1a", "#060810", "#030408"], moon: true, stars: true },
 };
 
-// 生成带噪点的真实山脉轮廓
-function generateMountainPath(w, h, baseY, roughness, seed) {
-  const points = [];
-  const segments = 40;
-  const dx = w / segments;
+// ==================== 高精度山脉生成器 ====================
 
-  // 生成几个主要山峰
-  const peaks = [];
-  const numPeaks = 3 + (seed % 4);
-  for (let i = 0; i < numPeaks; i++) {
-    peaks.push({
-      x: w * (0.05 + (i / (numPeaks + 1)) * 0.85 + (seed * 0.03 * i) % 0.15),
-      height: 0.3 + Math.random() * 0.5,
-      width: 0.03 + Math.random() * 0.08,
-    });
+// 基于中点位移算法生成自然山脊线
+function generateRidge(w, h, baseY, roughness, seed) {
+  const segments = 160; // 高分段数
+  const dx = w / segments;
+  const points = [];
+
+  // 随机种子
+  let rng = seed * 137.5;
+  function rand() { rng = (rng * 16807) % 2147483647; return (rng - 1) / 2147483646; }
+
+  // 使用中点位移生成地形高度场
+  const heights = new Array(segments + 1);
+  heights[0] = rand() * 0.15;
+  heights[segments] = rand() * 0.15;
+
+  let step = segments;
+  let amp = 0.45;
+
+  while (step > 1) {
+    const half = Math.floor(step / 2);
+    for (let i = half; i < segments; i += step) {
+      const avg = (heights[i - half] + heights[(i + half) % (segments + 1)]) / 2;
+      heights[i] = avg + (rand() - 0.5) * amp * 2;
+    }
+    for (let i = 0; i < segments; i += step) {
+      const left = heights[i];
+      const right = heights[(i + step) % (segments + 1)];
+      const mid = (left + right) / 2 + (rand() - 0.5) * amp * 0.7;
+      if (i + half < segments) heights[i + half] = mid;
+    }
+    step = half;
+    amp *= 0.55;
   }
+
+  // 归一化到 0-1 并塑形
+  let minH = 1, maxH = 0;
+  for (let i = 0; i <= segments; i++) { minH = Math.min(minH, heights[i]); maxH = Math.max(maxH, heights[i]); }
+  const range = maxH - minH || 1;
 
   for (let i = 0; i <= segments; i++) {
     const x = i * dx;
-    let y = baseY;
-
-    for (const peak of peaks) {
-      const dist = Math.abs(x - peak.x) / (peak.width * w);
-      if (dist < 1) {
-        const influence = Math.cos(dist * Math.PI / 2) * Math.cos(dist * Math.PI / 2);
-        y -= peak.height * h * influence;
-      }
-    }
-
-    // 添加微噪点
-    const microNoise = Math.sin(i * 3.7 + seed) * 8 + Math.sin(i * 7.1 + seed * 2) * 5;
-    y -= microNoise;
-
-    points.push({ x, y: Math.max(y, baseY - h * 0.45) });
+    const normalized = ((heights[i] - minH) / range);
+    // 塑形：让低谷更宽、山峰更尖
+    const shaped = Math.pow(normalized, 0.65);
+    const y = baseY - shaped * h * 0.45 + Math.sin(i * 0.3 + seed) * 3;
+    points.push({ x, y: Math.max(y, baseY - h * 0.44) });
   }
 
   return points;
 }
 
-function buildPathStr(points, close = false) {
+// 三次贝塞尔曲线构建平滑路径
+function buildSmoothPath(points, w, h) {
+  if (points.length < 3) return "";
   let d = `M ${points[0].x} ${points[0].y}`;
-  for (let i = 1; i < points.length; i++) {
-    const prev = points[i - 1];
-    const curr = points[i];
-    const cpx = (prev.x + curr.x) / 2;
-    d += ` Q ${prev.x} ${prev.y} ${cpx} ${((prev.y + curr.y) / 2)}`;
-    d += ` Q ${curr.x} ${curr.y} ${curr.x} ${curr.y}`;
+
+  for (let i = 1; i < points.length - 1; i++) {
+    const p0 = points[i - 1];
+    const p1 = points[i];
+    const p2 = points[i + 1];
+
+    // 控制点：平滑切线
+    const cpx1 = p1.x - (p2.x - p0.x) * 0.15;
+    const cpy1 = p1.y - (p2.y - p0.y) * 0.15;
+    const cpx2 = p1.x + (p2.x - p0.x) * 0.15;
+    const cpy2 = p1.y + (p2.y - p0.y) * 0.15;
+
+    d += ` C ${cpx1} ${cpy1} ${cpx2} ${cpy2} ${p1.x} ${p1.y}`;
   }
-  if (close) {
-    const last = points[points.length - 1];
-    const first = points[0];
-    d += ` L ${last.x} ${900} L ${first.x} ${900} Z`;
-  }
+
+  // 连接最后一个点
+  const last = points[points.length - 1];
+  d += ` L ${last.x} ${last.y}`;
   return d;
+}
+
+function closePath(d, points, h) {
+  const last = points[points.length - 1];
+  const first = points[0];
+  return d + ` L ${last.x} ${h} L ${first.x} ${h} Z`;
 }
 
 function drawStars(ctx, w, h) {
@@ -140,7 +168,7 @@ function drawWaterReflection(ctx, w, h, points, color) {
   ctx.translate(0, h * 0.55);
   ctx.scale(1, -0.5);
   ctx.translate(0, -h * 0.55);
-  const path = new Path2D(buildPathStr(points, true));
+  const path = new Path2D(closePath(buildSmoothPath(points, w, h), points, h));
   ctx.fillStyle = color;
   ctx.fill(path);
   ctx.restore();
@@ -236,10 +264,10 @@ function renderScene(ctx, width, height, sceneName) {
   const allPoints = [];
 
   layers.forEach((layer, idx) => {
-    const points = generateMountainPath(w, h, layer.baseY, layer.roughness, seed + idx * 13);
+    const points = generateRidge(w, h, layer.baseY, layer.roughness, seed + idx * 13);
     if (idx === 1) allPoints.push(...points);
 
-    const path = new Path2D(buildPathStr(points, true));
+    const path = new Path2D(closePath(buildSmoothPath(points, w, h), points, h));
     const grad = ctx.createLinearGradient(0, layer.baseY - h * 0.4, 0, h);
     grad.addColorStop(0, layer.colors[0] || scene.ground[0]);
     grad.addColorStop(0.5, layer.colors[1] || layer.colors[0] || scene.ground[1]);
@@ -323,8 +351,8 @@ function renderDynamic(ctx, w, h) {
   drawClouds(ctx, w, h, 42);
 
   // 山脉
-  const points = generateMountainPath(w, h, h * 0.6, 1.3, 7);
-  const path = new Path2D(buildPathStr(points, true));
+  const points = generateRidge(w, h, h * 0.6, 1.3, 7);
+  const path = new Path2D(closePath(buildSmoothPath(points, w, h), points, h));
   const grad = ctx.createLinearGradient(0, h * 0.3, 0, h);
   grad.addColorStop(0, hour >= 6 && hour < 19 ? "#2a3a30" : "#0a0e16");
   grad.addColorStop(1, hour >= 6 && hour < 19 ? "#0d1a14" : "#04060a");
@@ -332,8 +360,8 @@ function renderDynamic(ctx, w, h) {
   ctx.fill(path);
 
   // 第二层山
-  const points2 = generateMountainPath(w, h, h * 0.68, 1.0, 13);
-  const path2 = new Path2D(buildPathStr(points2, true));
+  const points2 = generateRidge(w, h, h * 0.68, 1.0, 13);
+  const path2 = new Path2D(closePath(buildSmoothPath(points2, w, h), points2, h));
   ctx.fillStyle = hour >= 6 && hour < 19 ? "#1a2a20" : "#060810";
   ctx.fill(path2);
 }
