@@ -185,7 +185,6 @@ export const useOSStore = defineStore("os", () => {
   // 桌面图标
   const desktopIcons = ref([
     { id: "file-manager", name: "文件管理器", icon: "folder", app: "FileManager" },
-    { id: "disk-manager", name: "磁盘管理", icon: "disk", app: "DiskManager" },
     { id: "system-info", name: "系统信息", icon: "monitor", app: "SystemInfo" },
     { id: "notepad", name: "记事本", icon: "file", app: "Notepad" },
     { id: "wallpaper", name: "壁纸设置", icon: "settings", app: "WallpaperSettings" },
@@ -196,7 +195,6 @@ export const useOSStore = defineStore("os", () => {
   // 应用注册表
   const appRegistry = {
     FileManager: { title: "文件管理器", icon: "folder", width: 900, height: 600 },
-    DiskManager: { title: "磁盘管理", icon: "disk", width: 800, height: 550 },
     SystemInfo: { title: "系统信息", icon: "monitor", width: 700, height: 500 },
     Notepad: { title: "记事本", icon: "file", width: 600, height: 450 },
     WallpaperSettings: { title: "壁纸设置", icon: "settings", width: 640, height: 480 },

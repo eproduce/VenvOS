@@ -92,6 +92,37 @@
           <span class="usage-pct">{{ disk.percent.toFixed(1) }}%</span>
         </div>
       </div>
+
+      <!-- 磁盘 I/O 统计 -->
+      <div v-if="diskIO" class="io-section">
+        <h4 class="io-title">📊 磁盘 I/O 统计</h4>
+        <div class="io-grid">
+          <div class="io-card">
+            <span class="io-label">读取次数</span>
+            <span class="io-value">{{ formatNumber(diskIO.read_count) }}</span>
+          </div>
+          <div class="io-card">
+            <span class="io-label">写入次数</span>
+            <span class="io-value">{{ formatNumber(diskIO.write_count) }}</span>
+          </div>
+          <div class="io-card">
+            <span class="io-label">读取字节</span>
+            <span class="io-value">{{ formatSize(diskIO.read_bytes) }}</span>
+          </div>
+          <div class="io-card">
+            <span class="io-label">写入字节</span>
+            <span class="io-value">{{ formatSize(diskIO.write_bytes) }}</span>
+          </div>
+          <div class="io-card">
+            <span class="io-label">读取耗时</span>
+            <span class="io-value">{{ diskIO.read_time }} ms</span>
+          </div>
+          <div class="io-card">
+            <span class="io-label">写入耗时</span>
+            <span class="io-value">{{ diskIO.write_time }} ms</span>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- 创建存储池弹窗 -->
@@ -130,6 +161,7 @@ const tab = ref("overview");
 const summary = ref({ pools_count: 0, disks_count: 0, disks_healthy: 0, pools_total: 0, pools_used: 0 });
 const pools = ref([]);
 const disks = ref([]);
+const diskIO = ref(null);
 const selectedPool = ref(null);
 const poolVolumes = ref([]);
 
@@ -155,6 +187,11 @@ async function loadAll() {
     summary.value = s.data.data || {};
     pools.value = p.data.data || [];
     disks.value = d.data.data || [];
+    // 加载磁盘 IO
+    try {
+      const ioRes = await api.get("/api/disks/io");
+      diskIO.value = ioRes.data.data || null;
+    } catch {}
   } catch (e) { console.error(e); }
 }
 
@@ -230,6 +267,11 @@ function getDiskClass(pct) {
   if (pct >= 90) return "danger";
   if (pct >= 70) return "warning";
   return "";
+}
+
+function formatNumber(n) {
+  if (!n) return "0";
+  return n.toLocaleString();
 }
 
 onMounted(loadAll);
@@ -333,4 +375,15 @@ onMounted(loadAll);
 .modal-dialog h3 { font-size: 16px; margin-bottom: 16px; color: var(--text-primary); }
 .modal-dialog input { width: 100%; margin-bottom: 16px; }
 .modal-actions { display: flex; justify-content: flex-end; gap: 8px; }
+
+/* I/O 统计 */
+.io-section { margin-top: 20px; }
+.io-title { font-size: 13px; font-weight: 600; color: var(--text-primary); margin-bottom: 10px; }
+.io-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.io-card {
+  background: var(--bg-sidebar); border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm); padding: 10px 12px;
+}
+.io-label { font-size: 10px; color: var(--text-muted); display: block; }
+.io-value { font-size: 15px; font-weight: 700; color: var(--text-primary); margin-top: 2px; }
 </style>

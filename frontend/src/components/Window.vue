@@ -32,10 +32,6 @@
         :window-id="window.id"
         :params="window.params"
       />
-      <DiskManager
-        v-else-if="window.app === 'DiskManager'"
-        :window-id="window.id"
-      />
       <SystemInfo
         v-else-if="window.app === 'SystemInfo'"
         :window-id="window.id"
@@ -51,6 +47,10 @@
       />
       <StorageManager
         v-else-if="window.app === 'StorageManager'"
+        :window-id="window.id"
+      />
+      <FileShareManager
+        v-else-if="window.app === 'FileShareManager'"
         :window-id="window.id"
       />
       <FileShareManager
@@ -81,7 +81,6 @@
 import { computed, reactive, onMounted, onUnmounted } from "vue";
 import { useOSStore } from "../store/index.js";
 import FileManager from "./apps/FileManager.vue";
-import DiskManager from "./apps/DiskManager.vue";
 import SystemInfo from "./apps/SystemInfo.vue";
 import Notepad from "./apps/Notepad.vue";
 import WallpaperSettings from "./apps/WallpaperSettings.vue";
