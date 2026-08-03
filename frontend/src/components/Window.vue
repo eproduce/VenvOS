@@ -49,6 +49,10 @@
         v-else-if="window.app === 'WallpaperSettings'"
         :window-id="window.id"
       />
+      <StorageManager
+        v-else-if="window.app === 'StorageManager'"
+        :window-id="window.id"
+      />
       <div v-else class="app-placeholder">
         <AppIcon :name="window.icon" :size="48" />
         <h3>{{ window.title }}</h3>
@@ -77,6 +81,7 @@ import DiskManager from "./apps/DiskManager.vue";
 import SystemInfo from "./apps/SystemInfo.vue";
 import Notepad from "./apps/Notepad.vue";
 import WallpaperSettings from "./apps/WallpaperSettings.vue";
+import StorageManager from "./apps/StorageManager.vue";
 import AppIcon from "./AppIcon.vue";
 
 const props = defineProps({

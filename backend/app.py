@@ -10,6 +10,7 @@ from api.files import files_bp
 from api.disks import disks_bp
 from api.holidays import holidays_bp
 from api.auth import auth_bp
+from api.storage import storage_bp
 
 from database import init_db
 from services.auth_service import AuthService
@@ -26,6 +27,7 @@ app.blueprint(files_bp)
 app.blueprint(disks_bp)
 app.blueprint(holidays_bp)
 app.blueprint(auth_bp)
+app.blueprint(storage_bp)
 
 # 启动时初始化数据库
 @app.before_server_start
