@@ -7,19 +7,14 @@
   >
     <!-- 壁纸层 -->
     <div class="desktop-bg">
-      <!-- 静态壁纸 -->
-      <div
-        v-if="store.currentWallpaper?.type === 'static'"
-        class="bg-wallpaper"
-        :style="{ background: store.currentWallpaper.background }"
-      ></div>
-      <!-- 动态壁纸 -->
-      <div
+      <WallpaperSVG
+        v-if="store.currentWallpaper?.type === 'static' && store.currentWallpaper?.svg"
+        :name="store.currentWallpaper.svg"
+      />
+      <WallpaperSVG
         v-else
-        class="bg-wallpaper"
-        :style="{ background: store.dynamicBackground || getDefaultDynamic() }"
-      ></div>
-      <!-- 柔光叠加层 -->
+        name="dynamic"
+      />
       <div class="bg-soft-light"></div>
     </div>
 
@@ -62,17 +57,13 @@
 
 <script setup>
 import { reactive, onMounted, onUnmounted } from "vue";
-import { useOSStore, getDynamicWallpaper } from "../store/index.js";
+import { useOSStore } from "../store/index.js";
 import DesktopIcon from "./DesktopIcon.vue";
 import AppIcon from "./AppIcon.vue";
+import WallpaperSVG from "./WallpaperSVG.vue";
 
 const store = useOSStore();
 const contextMenu = reactive({ show: false, x: 0, y: 0 });
-
-function getDefaultDynamic() {
-  const hour = new Date().getHours() + new Date().getMinutes() / 60;
-  return getDynamicWallpaper(hour);
-}
 
 function onContextMenu(e) {
   contextMenu.show = true;

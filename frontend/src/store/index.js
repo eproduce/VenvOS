@@ -4,7 +4,7 @@ import { ref, computed } from "vue";
 let windowIdCounter = 1000;
 
 // ==================== 壁纸定义 ====================
-// CSS 渐变模拟 macOS 风格动态景观
+// SVG 手绘 macOS 风格动态景观壁纸
 export const wallpapers = [
   {
     id: "dynamic",
@@ -13,104 +13,53 @@ export const wallpapers = [
     thumbnail: "linear-gradient(90deg, #1e2440 0%, #3498c8 33%, #e89860 66%, #07071a 100%)",
   },
   {
-    id: "macos-mountain",
+    id: "mountain",
     name: "macOS 山脉",
     type: "static",
     thumbnail: "linear-gradient(180deg, #1a3a5c 0%, #e8a87c 70%, #2d5a3f 100%)",
-    background: `
-      radial-gradient(circle 180px at 65% 52%, rgba(255,220,160,0.7) 0%, rgba(255,180,100,0.2) 40%, transparent 60%),
-      radial-gradient(ellipse 100% 30% at 50% 78%, #1a3a28 0%, #0d1f14 100%),
-      radial-gradient(ellipse 120% 35% at 50% 70%, #2d5a3f 0%, transparent 100%),
-      linear-gradient(175deg, #1a3458 0%, #2d5a8c 25%, #6ba3c7 45%, #8fc4d8 55%, #d4a878 68%, #e8c8a0 85%, #3a6040 100%)
-    `,
+    svg: "mountain",
   },
   {
-    id: "macos-desert",
+    id: "desert",
     name: "macOS 沙漠",
     type: "static",
     thumbnail: "linear-gradient(180deg, #5c3a6e 0%, #e89860 50%, #c4a060 100%)",
-    background: `
-      radial-gradient(circle 120px at 70% 35%, rgba(255,240,200,0.5) 0%, rgba(255,200,100,0.1) 50%, transparent 70%),
-      radial-gradient(ellipse 100% 35% at 50% 82%, #8b6b4a 0%, #3d2a1a 100%),
-      radial-gradient(ellipse 100% 20% at 50% 75%, #c49560 0%, transparent 100%),
-      linear-gradient(180deg, #3c1a4e 0%, #6a2a5e 18%, #a04a6a 35%, #d4786a 52%, #e8a060 68%, #d4b878 82%, #9b7a50 100%)
-    `,
+    svg: "desert",
   },
   {
-    id: "macos-aurora",
+    id: "aurora",
     name: "极光之夜",
     type: "static",
     thumbnail: "linear-gradient(180deg, #0a0a2e 0%, #1a3a5e 50%, #0d2a1a 100%)",
-    background: `
-      radial-gradient(ellipse 1px 1px at 15% 10%, #fff 0%, transparent 100%),
-      radial-gradient(ellipse 1px 1px at 35% 8%, #fff 0%, transparent 100%),
-      radial-gradient(ellipse 1px 1px at 60% 12%, #fff 0%, transparent 100%),
-      radial-gradient(ellipse 1px 1px at 78% 6%, #fff 0%, transparent 100%),
-      radial-gradient(ellipse 80% 6% at 50% 30%, rgba(100,220,180,0.15) 0%, transparent 70%),
-      radial-gradient(ellipse 70% 4% at 40% 28%, rgba(120,180,240,0.12) 0%, transparent 70%),
-      radial-gradient(ellipse 60% 10% at 55% 32%, rgba(140,200,160,0.1) 0%, transparent 60%),
-      radial-gradient(ellipse 100% 35% at 50% 90%, #0a1a10 0%, transparent 70%),
-      linear-gradient(180deg, #050520 0%, #0a1030 20%, #0d1840 40%, #0a1a30 65%, #081a20 85%, #0a1a15 100%)
-    `,
+    svg: "aurora",
   },
   {
-    id: "macos-lake",
+    id: "lake",
     name: "静谧湖泊",
     type: "static",
     thumbnail: "linear-gradient(180deg, #2a4a6e 0%, #8fc4d8 50%, #2a4a6e 100%)",
-    background: `
-      radial-gradient(circle 160px at 50% 20%, rgba(255,255,240,0.3) 0%, transparent 55%),
-      radial-gradient(ellipse 100% 40% at 50% 45%, rgba(50,100,160,0.25) 0%, rgba(30,60,100,0.15) 50%, transparent 80%),
-      radial-gradient(ellipse 100% 30% at 50% 88%, #1a3040 0%, #0a1820 100%),
-      linear-gradient(180deg, #1a3a5c 0%, #2d5680 20%, #4a78a0 40%, #8bb8cc 52%, #3a6888 58%, #284868 75%, #1a3048 100%)
-    `,
+    svg: "lake",
   },
   {
-    id: "macos-spring",
+    id: "spring",
     name: "春日花海",
     type: "static",
     thumbnail: "linear-gradient(180deg, #7ab8d4 0%, #c4e0a0 50%, #e8b4c8 100%)",
-    background: `
-      radial-gradient(ellipse 60% 30% at 70% 60%, rgba(240,160,200,0.2) 0%, transparent 60%),
-      radial-gradient(ellipse 50% 25% at 30% 65%, rgba(200,240,160,0.2) 0%, transparent 60%),
-      radial-gradient(ellipse 100% 25% at 50% 85%, #7a9a50 0%, #3a5a20 100%),
-      linear-gradient(180deg, #5a9ac0 0%, #8bc4dc 30%, #a4d4e0 50%, #c8e8c0 68%, #e8c8d0 82%, #c4a0b0 100%)
-    `,
+    svg: "spring",
   },
   {
-    id: "tahoe-morning",
+    id: "morning",
     name: "Tahoe 晨光",
     type: "static",
     thumbnail: "linear-gradient(180deg, #1a1a3e 0%, #3d5a80 30%, #98c1d9 60%, #e0cfa5 100%)",
-    background: `
-      radial-gradient(ellipse 80% 50% at 50% 35%, rgba(255,198,120,0.25) 0%, transparent 60%),
-      radial-gradient(ellipse 60% 40% at 20% 20%, rgba(130,180,240,0.2) 0%, transparent 50%),
-      linear-gradient(180deg, #1e2440 0%, #2d3e62 20%, #4a6d8c 45%, #8db4c8 65%, #d4c9a8 85%, #ebd9b0 100%)
-    `,
+    svg: "morning",
   },
   {
-    id: "tahoe-dusk",
-    name: "Tahoe 黄昏",
-    type: "static",
-    thumbnail: "linear-gradient(180deg, #2c1654 0%, #7b3f61 40%, #e8785a 70%, #f4b871 100%)",
-    background: `
-      radial-gradient(ellipse 80% 40% at 50% 55%, rgba(240,130,80,0.3) 0%, transparent 55%),
-      radial-gradient(ellipse 50% 35% at 30% 25%, rgba(160,100,140,0.2) 0%, transparent 50%),
-      linear-gradient(180deg, #181438 0%, #2d1a4e 20%, #5a3058 40%, #8b3d5c 60%, #c4685a 80%, #e89860 100%)
-    `,
-  },
-  {
-    id: "tahoe-night",
+    id: "night",
     name: "Tahoe 夜色",
     type: "static",
     thumbnail: "linear-gradient(180deg, #0a0a1a 0%, #1a1040 50%, #0d1b2a 100%)",
-    background: `
-      radial-gradient(ellipse 1px 1px at 20% 15%, rgba(255,255,255,0.4) 0%, transparent 100%),
-      radial-gradient(ellipse 1px 1px at 70% 25%, rgba(255,255,255,0.3) 0%, transparent 100%),
-      radial-gradient(ellipse 2px 2px at 45% 40%, rgba(255,255,255,0.2) 0%, transparent 100%),
-      radial-gradient(ellipse 60% 50% at 50% 80%, rgba(30,40,80,0.4) 0%, transparent 60%),
-      linear-gradient(180deg, #07071a 0%, #0d0f28 30%, #11163a 55%, #0d1428 80%, #080e1e 100%)
-    `,
+    svg: "night",
   },
 ];
 
