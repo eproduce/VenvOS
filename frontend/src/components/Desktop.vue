@@ -7,11 +7,11 @@
   >
     <!-- 壁纸层 -->
     <div class="desktop-bg">
-      <WallpaperSVG
+      <WallpaperCanvas
         v-if="store.currentWallpaper?.type === 'static' && store.currentWallpaper?.svg"
         :name="store.currentWallpaper.svg"
       />
-      <WallpaperSVG
+      <WallpaperCanvas
         v-else
         name="dynamic"
       />
@@ -60,7 +60,7 @@ import { reactive, onMounted, onUnmounted } from "vue";
 import { useOSStore } from "../store/index.js";
 import DesktopIcon from "./DesktopIcon.vue";
 import AppIcon from "./AppIcon.vue";
-import WallpaperSVG from "./WallpaperSVG.vue";
+import WallpaperCanvas from "./WallpaperCanvas.vue";
 
 const store = useOSStore();
 const contextMenu = reactive({ show: false, x: 0, y: 0 });
